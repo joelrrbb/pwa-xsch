@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:client": "turbo run build --filter=@repo/client",
     "dev": "concurrently -n \"turbo,tunnel\" -c \"cyan,magenta\" \"npx turbo dev\" \"npx cloudflared tunnel --url http://localhost:5173\"",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
