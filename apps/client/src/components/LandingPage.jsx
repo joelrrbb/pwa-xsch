@@ -140,6 +140,39 @@ export default function LandingPage() {
 </svg>
                 </div>
               </button>
+			  
+			  
+			  
+			  
+			  <div style={{
+        marginTop: '20px', // Espacio exacto entre botón y texto
+        color: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        cursor: 'pointer',
+        width: '100%' // Asegura que el contenedor del texto use todo el ancho para centrar
+      }}>
+        <span style={{ 
+          textTransform: 'uppercase', 
+          fontWeight: '800', 
+          fontSize: '0.85rem', 
+          letterSpacing: '1px' 
+        }}>
+          Juntos somos más fuertes
+        </span>
+        <svg 
+          viewBox="0 0 24 24" 
+          style={{ width: '18px', height: '18px', fill: 'currentColor' }}
+        >
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </div>
+	  
+	  
+	  
+    
             </div>
           )}
 
