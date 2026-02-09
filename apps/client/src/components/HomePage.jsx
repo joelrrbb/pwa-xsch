@@ -213,9 +213,9 @@ export default function HomePage() {
 			<IonAlert
   isOpen={showAlert}
   onDidDismiss={() => setShowAlert(false)}
-  header="¡Bienvenido!"
-  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Sigue sumando puntos para fortalecer nuestra red."
-                buttons={[
+  header="Bienvenido"
+  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Empieza a sumar puntos completando tareas y fortaleciendo nuestra red de simpatizantes."
+  buttons={[
     {
       text: '¡VAMOS A GANAR!',
       role: 'confirm',
@@ -226,7 +226,7 @@ export default function HomePage() {
     }
   ]}
 ></IonAlert>
-			  
+
 			<div className="mt-8 px-4">
 </div>
 			
