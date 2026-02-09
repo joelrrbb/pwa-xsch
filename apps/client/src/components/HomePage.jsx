@@ -210,10 +210,29 @@ export default function HomePage() {
 				</div> 
 			*/}
 						
+			<IonAlert
+  isOpen={showAlert}
+  onDidDismiss={() => setShowAlert(false)}
+  header="¡Bienvenido!"
+  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Chuquisaca nos necesita: sigue sumando puntos para fortalecer nuestra red."
+                buttons={[
+    {
+      text: '¡VAMOS A GANAR!',
+      role: 'confirm',
+      cssClass: 'alert-button-confirm',
+      handler: () => {
+        console.log('Voluntario motivado');
+      }
+    }
+  ]}
+></IonAlert>
+
+
+
 <IonAlert
                 isOpen={showAlert}
                 onDidDismiss={() => setShowAlert(false)}
-                header="¡Bienvenido!"
+                header="¡Bienvenido a la Victoria!"
                 message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Chuquisaca nos necesita: sigue sumando puntos para fortalecer nuestra red."
                 buttons={[
                   {
@@ -223,6 +242,8 @@ export default function HomePage() {
                   }
                 ]}
               ></IonAlert>
+			  
+			  
 			  
 			<div className="mt-8 px-4">
 </div>
