@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+
+@font-face {
+  font-family: 'YS Text';
+  /* El punto '.' indica que empezamos desde la carpeta src */
+  src: url('./assets/fonts/yango_headline_black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+.ys-text {
+   font-family: 'YS Text', sans-serif;
+   font-size: 34px;
+   color: #000;
+   /* margin-bottom: 10px; */
+}
+
+.ys-text-sm {
+   font-family: 'YS Text', sans-serif;
+   font-size: 30px;
+   color: #000;
+   /* margin-bottom: 10px; */
+}
+button.alert-button.alert-button-confirm {
+  font-family: 'YS Text', sans-serif;
+  background-color: var(--ion-color-success)!important;
+  color: var(--ion-color-success-contrast);
+}
+
+button.alert-button.alert-button-cancel {
+  font-family: 'YS Text', sans-serif;
+  color: var(--ion-color-success-contrast);
+}
+
+ion-alert {
+  --border-width: 0px; /* Elimina bordes internos de Ionic */
+  outline: none !important; /* Elimina el borde de enfoque del navegador */
+}
+.alert-wrapper {
+  outline: none !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); /* Opcional: añade una sombra suave en lugar del borde */
+}
+
+.alert-head .sc-ion-alert-ios{
+	font-family: 'YS Text', sans-serif;
+	font-size: 34px;
+   color: #000;
+}
+
+/* Separación de tarjetas */
+.product-card {
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  border: 1px solid #f2f2f2;
+}
+
+.product-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 12px;
+}
+
+.product-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #888;
+}
+
+.product-price {
+  margin: 2px 0 14px 0;
+  font-size: 1.2rem!important;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Selector de cantidad */
+.counter-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f4f5f8;
+  border-radius: 12px;
+  height: 38px;
+}
+
+.add-button {
+  --border-radius: 12px;
+  height: 38px;
+  font-weight: 700;
+  --box-shadow: none;
+}
+
+/* Footer y Botón WhatsApp */
+.footer-white {
+  background: #ffffff;
+  padding: 15px 5px 25px 5px;
+  border-top: 1px solid #eee;
+}
+
+.footer-total {
+  margin: 0;
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+}
+
+.whatsapp-btn-modern {
+  --background: #25D366;
+  --background-activated: #1eb957;
+  --border-radius: 18px;
+  height: 56px;
+  font-weight: 800;
+  font-size: 15px;
+  --box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25);
+  margin: 0;
+}
+
+/* Badge personalizado dentro del botón */
+.badge-custom {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 10px;
+  margin-left: 10px;
+  font-size: 0.9rem;
+  backdrop-filter: blur(4px);
+}

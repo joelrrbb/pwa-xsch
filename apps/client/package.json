@@ -1,0 +1,42 @@
+{
+  "name": "@repo/client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ionic/react": "^8.7.17",
+    "@ionic/react-router": "^8.7.17",
+    "@khmyznikov/pwa-install": "^0.6.2",
+    "@rdlabo/ionic-theme-ios26": "^2.2.0",
+    "@supabase/supabase-js": "^2.93.3",
+    "@tailwindcss/postcss": "^4.1.18",
+    "axios": "^1.13.2",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-onesignal": "^3.4.6",
+    "react-router-dom": "^5.3.4",
+    "swiper": "^12.1.0",
+    "vite-plugin-pwa": "^1.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-react": "^5.1.1",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4"
+  }
+}

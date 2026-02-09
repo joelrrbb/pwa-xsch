@@ -1,0 +1,20 @@
+{
+  "name": "turbo-pwa",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "concurrently -n \"turbo,tunnel\" -c \"cyan,magenta\" \"npx turbo dev\" \"npx cloudflared tunnel --url http://localhost:5173\"",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "turbo": "latest"
+  }
+}

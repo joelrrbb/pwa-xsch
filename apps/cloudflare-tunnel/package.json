@@ -1,0 +1,6 @@
+{
+  "name": "tunnel",
+  "scripts": {
+    "dev": "npx cloudflared tunnel --url http://localhost:5173"
+  }
+}
