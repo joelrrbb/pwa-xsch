@@ -114,42 +114,48 @@ export default function HomePage() {
 			  
 			  
 			  <div style={styles.profileCard}>
-  {/* Fila Superior: Nombre y Puntos */}
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-    <div style={{ flex: 1 }}>
-      <IonText color="dark">
-        <h2 style={{ margin: 0, fontWeight: '800', fontSize: '1.4rem', lineHeight: '1.2' }}>
-          {getMemberTypeName(session.member_type)}
-        </h2>
-      </IonText>
-      <div>
-        {session.name || 'Simpatizante'}
-      </div>
-    </div>
-    <PointsDisplay />
-  </div>
+                {/* Fila Superior: Nombre y (QR + Puntos) */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  
+                  {/* Lado Izquierdo: Nombre y Tipo */}
+                  <div style={{ flex: 1 }}>
+                    <IonText color="dark">
+                      <h2 style={{ margin: 0, fontWeight: '800', fontSize: '1.4rem', lineHeight: '1.2' }}>
+                        {getMemberTypeName(session.member_type)}
+                      </h2>
+                    </IonText>
+                    <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                      {session.name || 'Simpatizante'}
+                    </div>
+                  </div>
 
-  {/* Fila de Datos Rápidos */}
-  <div style={styles.dataGrid}>
-    <div style={styles.dataItem}>
-      <span style={styles.dataLabel}>Celular</span>
-      <span style={styles.dataValue}>{session.phone || 'No registrado'}</span>
-    </div>
-    <div style={styles.dataItem}>
-      <span style={styles.dataLabel}>Estado</span>
-      <span style={{ 
-        ...styles.dataValue, 
-        color: session.is_verified === 2 ? '#2dd36f' : session.is_verified === 3 ? '#eb445a' : '#ffc409' 
-      }}>
-        {session.is_verified === 2 ? '● Verificado'
-          : session.is_verified === 1 ? '● En revisión'
-          : session.is_verified === 3 ? '● Rechazado'
-          : '● Pendiente'}
-      </span>
-    </div>
-  </div>
-</div>
+                  {/* Lado Derecho: Contenedor para QR y Puntos alineados */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <QRAsistencia userId={session.id} />
+                    <PointsDisplay />
+                  </div>
+                </div>
 
+                {/* Fila de Datos Rápidos */}
+                <div style={styles.dataGrid}>
+                  <div style={styles.dataItem}>
+                    <span style={styles.dataLabel}>Celular</span>
+                    <span style={styles.dataValue}>{session.phone || 'No registrado'}</span>
+                  </div>
+                  <div style={styles.dataItem}>
+                    <span style={styles.dataLabel}>Estado</span>
+                    <span style={{ 
+                      ...styles.dataValue, 
+                      color: session.is_verified === 2 ? '#2dd36f' : session.is_verified === 3 ? '#eb445a' : '#ffc409' 
+                    }}>
+                      {session.is_verified === 2 ? '● Verificado'
+                        : session.is_verified === 1 ? '● En revisión'
+                        : session.is_verified === 3 ? '● Rechazado'
+                        : '● Pendiente'}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               
               {session.is_verified === 2 && (
@@ -203,9 +209,7 @@ export default function HomePage() {
 				</button>
 				</div> 
 			*/}
-			
-			<QRAsistencia userId={session.id} />
-			
+						
 			<IonAlert
   isOpen={showAlert}
   onDidDismiss={() => setShowAlert(false)}
