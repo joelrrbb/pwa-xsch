@@ -214,7 +214,7 @@ export default function HomePage() {
   isOpen={showAlert}
   onDidDismiss={() => setShowAlert(false)}
   header="¡Bienvenido!"
-  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Chuquisaca nos necesita: sigue sumando puntos para fortalecer nuestra red."
+  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Sigue sumando puntos para fortalecer nuestra red."
                 buttons={[
     {
       text: '¡VAMOS A GANAR!',
@@ -226,24 +226,6 @@ export default function HomePage() {
     }
   ]}
 ></IonAlert>
-
-
-
-<IonAlert
-                isOpen={showAlert}
-                onDidDismiss={() => setShowAlert(false)}
-                header="¡Bienvenido a la Victoria!"
-                message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Chuquisaca nos necesita: sigue sumando puntos para fortalecer nuestra red."
-                buttons={[
-                  {
-                    text: '¡VAMOS A GANAR!',
-                    role: 'confirm',
-                    handler: () => { console.log('Usuario motivado'); }
-                  }
-                ]}
-              ></IonAlert>
-			  
-			  
 			  
 			<div className="mt-8 px-4">
 </div>
