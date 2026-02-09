@@ -65,7 +65,7 @@ export default function HomePage() {
         setShowModal(data.is_verified !== 2);
       }
 	  
-	  if (Number(data.is_verified) === 2 && Number(data.points) === 0) {
+	  if (Number(data.is_verified) === 2 && Number(data.points) === 10) {
         setShowAlert(true);
       }
     };
@@ -210,22 +210,20 @@ export default function HomePage() {
 				</div> 
 			*/}
 						
-			<IonAlert
-  isOpen={showAlert}
-  onDidDismiss={() => setShowAlert(false)}
-  header="Tu cuenta ha sido activada"
-  message="Nos alegra tenerte con nosotros. Chuquisaca nos necesita: empieza a sumar puntos completando tareas y fortaleciendo nuestra red de simpatizantes."
-  buttons={[
-    {
-      text: '¡VAMOS A GANAR!',
-      role: 'confirm',
-      cssClass: 'alert-button-confirm',
-      handler: () => {
-        console.log('Voluntario motivado');
-      }
-    }
-  ]}
-></IonAlert>
+<IonAlert
+                isOpen={showAlert}
+                onDidDismiss={() => setShowAlert(false)}
+                header="¡Bienvenido!"
+                message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Chuquisaca nos necesita: sigue sumando puntos para fortalecer nuestra red."
+                buttons={[
+                  {
+                    text: '¡VAMOS A GANAR!',
+                    role: 'confirm',
+                    handler: () => { console.log('Usuario motivado'); }
+                  }
+                ]}
+              ></IonAlert>
+			  
 			<div className="mt-8 px-4">
 </div>
 			

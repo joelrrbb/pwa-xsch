@@ -71,27 +71,27 @@ export default function LandingPage() {
                 onClick={() => pwaInstallRef.current?.showDialog()}
                 style={{
                   width: '100%',
-                  backgroundColor: '#00FF00',
+                  backgroundColor: '#f7ff19',
                   borderRadius: '1rem',
                   border: 'none',
                   color: '#000',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '1.2rem 0.8rem 1.2rem 1.4rem',
+                  padding: '1rem 0.8rem 1rem 1.3rem',
                   cursor: 'pointer',
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', opacity: 0.7, letterSpacing: '0.5px' }}>
+                  <span style={{ fontSize: '0.625rem', fontWeight: 'bold', textTransform: 'uppercase', opacity: 0.7, letterSpacing: '0.5px' }}>
                     Disponible para tu dispositivo
                   </span>
-                  <span style={{ fontSize: '1.4rem', fontWeight: '900', lineHeight: '1', marginTop: '4px' }}>
+                  <span style={{ fontSize: '1.1rem', fontWeight: '900', lineHeight: '1', marginTop: '4px' }}>
                     DESCARGAR AHORA
                   </span>
                 </div>
 
-                <div style={{ width: '44px', height: '44px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: '36px', height: '36px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                   <svg
   viewBox="0 0 24 24"
   style={{ 
