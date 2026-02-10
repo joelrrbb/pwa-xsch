@@ -21,11 +21,23 @@ export default function LandingPage() {
       } catch (err) { setLoading(false); }
     };
     fetchLandingImg();
+	
+	const handler = (e) => {
+      console.log("Evento de instalación capturado");
+    };
+	window.addEventListener('beforeinstallprompt', handler);
 
     const timer = setTimeout(() => {
-      pwaInstallRef.current?.showDialog();
-    }, 6000);
-    return () => clearTimeout(timer);
+      if (pwaInstallRef.current) {
+        console.log("Intentando mostrar diálogo...");
+        pwaInstallRef.current.showDialog();
+      }
+    }, 3000);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
