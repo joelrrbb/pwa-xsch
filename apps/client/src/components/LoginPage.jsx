@@ -134,6 +134,8 @@ const LoginPage = ({ onLogin }) => {
                 />
               </div>
             </IonItem>
+			
+			<div style={{ padding: '0 .9rem' }}>
 
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
               <IonText className="ys-text">
@@ -192,6 +194,9 @@ const LoginPage = ({ onLogin }) => {
               {!loading ? 'Ingresar' : <IonSpinner name="crescent" color="light" />}
             </IonButton>
           </div>
+		  
+		  </div>
+		  
         </div>
       </IonContent>
     </IonPage>
