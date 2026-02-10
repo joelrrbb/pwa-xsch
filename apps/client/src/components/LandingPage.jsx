@@ -146,7 +146,7 @@ export default function LandingPage() {
 			  
 			  <div style={{
         marginTop: '20px', // Espacio exacto entre botón y texto
-        color: '#fff',
+        color: '#000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
