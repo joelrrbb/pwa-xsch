@@ -4,33 +4,26 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   server: {
-    host: true, // Permite acceder desde la IP de tu red local
-	allowedHosts: [
-      '.trycloudflare.com' // El dominio de tu túnel
-    ],
-	proxy: {
+    host: true,
+    allowedHosts: ['.trycloudflare.com'],
+    proxy: {
       '/api': 'http://localhost:3001'
     }
   },
   plugins: [
     react(),
     VitePWA({
-      // Estrategia de actualización: 'autoUpdate' refresca la app automáticamente
-      registerType: 'prompt',
-      
-      // Habilita el Service Worker durante el desarrollo (vital para probar notificaciones)
+      registerType: 'prompt', // Mantenemos prompt para que no reinicie solo
       devOptions: {
         enabled: true,
         type: 'module'
       },
-
-      // Configuración del archivo manifest (lo que hace que sea instalable)
       manifest: {
         name: 'XS-CH',
         short_name: 'XS-CH',
-        theme_color: '#ffffff',//barra superior
+        theme_color: '#ffffff',
         background_color: '#ffffff',
-        display: 'standalone', // Se abre como una app nativa, sin barra de navegador
+        display: 'standalone',
         icons: [
           {
             src: 'home-pwa.svg',
@@ -41,20 +34,31 @@ export default defineConfig({
             src: 'home-pwa.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable' // Importante para iconos en Android
+            purpose: 'any maskable'
           }
         ]
       },
-
-      // Configuración del Service Worker (Workbox)
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico}'], // Archivos a cachear para modo offline
+        // 1. Solo archivos esenciales en el precache. 
+        // NO incluyas imágenes aquí si cambian seguido.
+        globPatterns: ['**/*.{js,css,html,ico}'], 
+
+        // 2. Manejo de caché "suave" para contenido dinámico
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'CacheFirst',
+            // 3. CAMBIO CLAVE: StaleWhileRevalidate
+            // Sirve lo que hay en caché al instante, pero actualiza por detrás.
+            handler: 'StaleWhileRevalidate', 
             options: {
               cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 40, // Evita que la caché crezca infinito y crashee el móvil
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 1 semana de vida
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             },
           },
         ],
