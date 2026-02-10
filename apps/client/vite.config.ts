@@ -16,7 +16,7 @@ export default defineConfig({
     react(),
     VitePWA({
       // Estrategia de actualización: 'autoUpdate' refresca la app automáticamente
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       
       // Habilita el Service Worker durante el desarrollo (vital para probar notificaciones)
       devOptions: {
@@ -48,7 +48,7 @@ export default defineConfig({
 
       // Configuración del Service Worker (Workbox)
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'], // Archivos a cachear para modo offline
+        globPatterns: ['**/*.{js,css,html,ico}'], // Archivos a cachear para modo offline
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',

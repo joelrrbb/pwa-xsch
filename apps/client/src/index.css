@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* body { */
+  /* overscroll-behavior-y: contain;  */
+/* } */
 
 @font-face {
   font-family: 'YS Text';
