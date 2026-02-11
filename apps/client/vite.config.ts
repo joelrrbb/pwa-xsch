@@ -4,30 +4,33 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   server: {
-    host: true, 
-    allowedHosts: ['.trycloudflare.com'],
-    proxy: {
+    host: true, // Permite acceder desde la IP de tu red local
+	allowedHosts: [
+      '.trycloudflare.com' // El dominio de tu túnel
+    ],
+	proxy: {
       '/api': 'http://localhost:3001'
     }
   },
   plugins: [
     react(),
     VitePWA({
-	selfDestroying: true,
-      // 1. Cambiamos a 'prompt' para que no recargue solo, o 'autoUpdate' con caché vacío
+      // Estrategia de actualización: 'autoUpdate' refresca la app automáticamente
       registerType: 'autoUpdate',
       
-      // 2. Deshabilitamos el Service Worker en desarrollo para evitar el loop local
+      // Habilita el Service Worker durante el desarrollo (vital para probar notificaciones)
       devOptions: {
-        enabled: false 
+        enabled: true,
+        type: 'module'
       },
 
+      // Configuración del archivo manifest (lo que hace que sea instalable)
       manifest: {
         name: 'XS-CH',
         short_name: 'XS-CH',
-        theme_color: '#ffffff',
+        theme_color: '#ffffff',//barra superior
         background_color: '#ffffff',
-        display: 'standalone',
+        display: 'standalone', // Se abre como una app nativa, sin barra de navegador
         icons: [
           {
             src: 'home-pwa.svg',
@@ -38,19 +41,14 @@ export default defineConfig({
             src: 'home-pwa.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
+            purpose: 'any maskable' // Importante para iconos en Android
           }
         ]
       },
 
-      // 3. CONFIGURACIÓN PARA NO CACHEAR NADA
+      // Configuración del Service Worker (Workbox)
       workbox: {
-        // No pre-cacheamos ningún archivo
-        globPatterns: [], 
-        // No cacheamos nada en tiempo de ejecución
-        runtimeCaching: [],
-        // Forzamos a que el SW no tome el control de las peticiones
-        navigationPreload: false,
+        globPatterns: ['**/*.{js,css,html,ico}'], // Archivos a cachear para modo offline
       }
     })
   ],
