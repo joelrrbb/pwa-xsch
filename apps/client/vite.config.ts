@@ -13,6 +13,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+	selfDestroying: true,
       // 1. Cambiamos a 'prompt' para que no recargue solo, o 'autoUpdate' con caché vacío
       registerType: 'autoUpdate',
       
