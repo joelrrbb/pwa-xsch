@@ -48,7 +48,7 @@ export default defineConfig({
 
       // Configuración del Service Worker (Workbox)
       workbox: {
-        globPatterns: [], // Archivos a cachear para modo offline
+        globPatterns: [],
 		navigateFallback: '/index.html',
       }
     })
