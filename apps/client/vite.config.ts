@@ -16,7 +16,7 @@ export default defineConfig({
     react(),
     VitePWA({
       // Estrategia de actualización: 'autoUpdate' refresca la app automáticamente
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       
       // Habilita el Service Worker durante el desarrollo (vital para probar notificaciones)
       devOptions: {
