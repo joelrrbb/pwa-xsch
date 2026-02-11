@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt', // Mantenemos prompt para que no reinicie solo
+      registerType: 'autoUpdate', // Se actualiza solo
       devOptions: {
         enabled: true,
         type: 'module'
@@ -39,22 +39,22 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // 1. Solo archivos esenciales en el precache. 
-        // NO incluyas imágenes aquí si cambian seguido.
-        globPatterns: ['**/*.{js,css,html,ico}'], 
+        // --- ESTO ES LO QUE ELIMINA EL PROMPT ---
+        skipWaiting: true,      // Fuerza al nuevo SW a activarse de inmediato
+        clientsClaim: true,     // El SW toma control de la página desde el segundo cero
+        cleanupOutdatedCaches: true, // Borra caché viejo automáticamente
+        // ----------------------------------------
 
-        // 2. Manejo de caché "suave" para contenido dinámico
+        globPatterns: ['**/*.{js,css,html,ico}'], 
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
-            // 3. CAMBIO CLAVE: StaleWhileRevalidate
-            // Sirve lo que hay en caché al instante, pero actualiza por detrás.
             handler: 'StaleWhileRevalidate', 
             options: {
               cacheName: 'images-cache',
               expiration: {
-                maxEntries: 40, // Evita que la caché crezca infinito y crashee el móvil
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 1 semana de vida
+                maxEntries: 40,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
               cacheableResponse: {
                 statuses: [0, 200]
