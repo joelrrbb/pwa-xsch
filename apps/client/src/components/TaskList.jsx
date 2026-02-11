@@ -12,7 +12,6 @@ const TaskList = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [showToast, setShowToast] = useState({ show: false, points: 0 });
   
-  // Referencia para saber qué tarea completar al regresar
   const pendingTaskRef = useRef(null);
 
   useEffect(() => {
@@ -32,16 +31,23 @@ const TaskList = ({ userId }) => {
     }
   };
 
-  // Lógica de detección de regreso a la app
+  // Lógica de retorno: Espera 1 segundo exacto tras volver a la app
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && pendingTaskRef.current) {
-        markAsComplete(pendingTaskRef.current);
+        // Extraemos la tarea y limpiamos la referencia inmediatamente
+        const taskToComplete = pendingTaskRef.current;
+        pendingTaskRef.current = null; 
+
+        // Retraso de 1000ms solicitado
+        setTimeout(() => {
+          markAsComplete(taskToComplete);
+        }, 1000);
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [userId]); // Agregamos userId por seguridad
+  }, [userId]);
 
   const startTask = (task) => {
     pendingTaskRef.current = task;
@@ -49,11 +55,11 @@ const TaskList = ({ userId }) => {
   };
 
   const markAsComplete = async (task) => {
-    if (!task || !task.id || !userId) return;
-
+    if (!task || !userId) return;
     const safePoints = Number(task.points) || 0;
 
     try {
+      // 1. Ejecutar en Supabase
       const { error } = await supabase.rpc('process_task_completion', {
         p_post_id: task.id,
         p_user_id: userId,
@@ -62,7 +68,7 @@ const TaskList = ({ userId }) => {
 
       if (error) throw error;
 
-      // Actualización de puntos reactiva (tu lógica original de localStorage)
+      // 2. Sincronizar LocalStorage para el Header
       const savedSession = localStorage.getItem('user_session');
       if (savedSession) {
         const sessionData = JSON.parse(savedSession);
@@ -71,14 +77,12 @@ const TaskList = ({ userId }) => {
         window.dispatchEvent(new Event('points-updated'));
       }
 
-      // Limpiar UI
+      // 3. Feedback visual (UI)
       setTasks(prev => prev.filter(t => t.id !== task.id));
       setShowToast({ show: true, points: safePoints });
       
     } catch (err) {
       console.error("Error al procesar la tarea:", err.message);
-    } finally {
-      pendingTaskRef.current = null;
     }
   };
 
@@ -99,26 +103,21 @@ const TaskList = ({ userId }) => {
   return (
     <div>
       <IonText color="dark"><h2 className="ys-text">Tareas disponibles</h2></IonText>
-      
       <WhatsAppBanner />
 
       {tasks.map(task => {
         const remainingText = getTimeRemainingText(task.deadline);
-
         return (
           <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '12px' }}>
             <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px' }}>
               
-              {/* Thumbnail a la izquierda */}
               <div style={{ width: '50px', height: '50px', flexShrink: 0 }}>
                 <IonImg src={task.thumbnail} style={{ borderRadius: '8px', objectFit: 'cover', height: '100%' }} />
               </div>
 
-              {/* Contenido Central y Derecha */}
               <div style={{ flexGrow: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <h2 className="ys-text" style={{ margin: '0', color: '#000', flex: 1 }}>{task.caption}</h2>
-                  {/* Badge de Puntos (Original) */}
                   <IonBadge style={{ marginLeft: '10px', padding:'5px', background:'#48dd55' }}>
                     +{task.points || 0} puntos
                   </IonBadge>
@@ -127,16 +126,14 @@ const TaskList = ({ userId }) => {
                 <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#444' }}>{task.description}</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <IonButton 
-                      size="small" 
-                      onClick={() => startTask(task)}
-                      disabled={remainingText === "Expirado"}
-                      style={{ '--border-radius': '6px', margin: 0 }}
-                    >
-                      Realizar tarea
-                    </IonButton>
-                  </div>
+                  <IonButton 
+                    size="small" 
+                    onClick={() => startTask(task)}
+                    disabled={remainingText === "Expirado"}
+                    style={{ '--border-radius': '6px', margin: 0 }}
+                  >
+                    Realizar tarea
+                  </IonButton>
 
                   {remainingText && (
                     <span style={{ fontSize: '0.75rem', color: remainingText === "Expirado" ? "red" : "#888" }}>
