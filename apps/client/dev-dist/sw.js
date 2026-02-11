@@ -67,7 +67,7 @@ if (!self.define) {
     });
   };
 }
-define(['./workbox-abb5c134'], (function (workbox) { 'use strict';
+define(['./workbox-6d1fb45c'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -78,18 +78,12 @@ define(['./workbox-abb5c134'], (function (workbox) { 'use strict';
    * See https://goo.gl/S9QRab
    */
   workbox.precacheAndRoute([{
-    "url": "index.html",
-    "revision": "0.6uhuqk1gpkg"
+    "url": "/index.html",
+    "revision": "0.mjhcucg8fh8"
   }], {});
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
+  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/index.html"), {
     allowlist: [/^\/$/]
   }));
-  workbox.registerRoute(({
-    request
-  }) => request.destination === "image", new workbox.CacheFirst({
-    "cacheName": "images-cache",
-    plugins: []
-  }), 'GET');
 
 }));

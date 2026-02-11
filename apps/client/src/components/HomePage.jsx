@@ -178,7 +178,7 @@ export default function HomePage() {
 
   {/* Imagen 2: Donación */}
   <IonRouterLink 
-    routerLink="/shop" 
+    routerLink="/donation" 
     routerDirection="forward" 
     style={{ flex: 1 }}
   >
@@ -198,6 +198,28 @@ export default function HomePage() {
     
 						{/* Nuevo componente de Gemini */}
 					<GeminiCommenter userId={session.id} />
+					
+					{/* Banner de la Tienda (Acceso a Shop) */}
+				<IonRouterLink 
+					routerLink="/shop" 
+					routerDirection="forward" 
+					style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
+				>
+				<img 
+					src="https://res.cloudinary.com/dljymqntm/image/upload/v1770766715/banner-shop_dchwya.jpg"
+					alt="Tienda"
+					style={{ 
+					width: '100%', 
+					height: '120px', 
+					objectFit: 'cover', 
+					borderRadius: '18px', 
+					display: 'block',
+					boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
+					}} 
+				/>
+				</IonRouterLink>
+
+
 				</>
 				
               )}
