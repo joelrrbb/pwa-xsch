@@ -48,7 +48,16 @@ export default defineConfig({
 
       // Configuración del Service Worker (Workbox)
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico}'], // Archivos a cachear para modo offline
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'], // Archivos a cachear para modo offline
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+            },
+          },
+        ],
       }
     })
   ],
