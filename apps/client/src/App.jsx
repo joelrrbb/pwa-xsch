@@ -105,8 +105,8 @@ function App() {
           </Route>
 
           <Route exact path="/shop">
-            {!isAuthenticated ? <Redirect to="/login" /> : <ShopPage />}
-          </Route>
+			<ShopPage />
+		  </Route>
 
           {/* Redirección inicial */}
           <Route exact path="/">
