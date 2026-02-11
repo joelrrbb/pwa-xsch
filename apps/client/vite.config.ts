@@ -4,33 +4,29 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   server: {
-    host: true, // Permite acceder desde la IP de tu red local
-	allowedHosts: [
-      '.trycloudflare.com' // El dominio de tu túnel
-    ],
-	proxy: {
+    host: true, 
+    allowedHosts: ['.trycloudflare.com'],
+    proxy: {
       '/api': 'http://localhost:3001'
     }
   },
   plugins: [
     react(),
     VitePWA({
-      // Estrategia de actualización: 'autoUpdate' refresca la app automáticamente
+      // 1. Cambiamos a 'prompt' para que no recargue solo, o 'autoUpdate' con caché vacío
       registerType: 'autoUpdate',
       
-      // Habilita el Service Worker durante el desarrollo (vital para probar notificaciones)
+      // 2. Deshabilitamos el Service Worker en desarrollo para evitar el loop local
       devOptions: {
-        enabled: true,
-        type: 'module'
+        enabled: false 
       },
 
-      // Configuración del archivo manifest (lo que hace que sea instalable)
       manifest: {
         name: 'XS-CH',
         short_name: 'XS-CH',
-        theme_color: '#ffffff',//barra superior
+        theme_color: '#ffffff',
         background_color: '#ffffff',
-        display: 'standalone', // Se abre como una app nativa, sin barra de navegador
+        display: 'standalone',
         icons: [
           {
             src: 'home-pwa.svg',
@@ -41,23 +37,19 @@ export default defineConfig({
             src: 'home-pwa.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable' // Importante para iconos en Android
+            purpose: 'any maskable'
           }
         ]
       },
 
-      // Configuración del Service Worker (Workbox)
+      // 3. CONFIGURACIÓN PARA NO CACHEAR NADA
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico}'], // Archivos a cachear para modo offline
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'images-cache',
-            },
-          },
-        ],
+        // No pre-cacheamos ningún archivo
+        globPatterns: [], 
+        // No cacheamos nada en tiempo de ejecución
+        runtimeCaching: [],
+        // Forzamos a que el SW no tome el control de las peticiones
+        navigationPreload: false,
       }
     })
   ],
