@@ -178,7 +178,7 @@ export default function HomePage() {
 
   {/* Imagen 2: Donación */}
   <IonRouterLink 
-    routerLink="/donation" 
+    routerLink="/shop" 
     routerDirection="forward" 
     style={{ flex: 1 }}
   >
