@@ -127,7 +127,7 @@ const LoginPage = ({ onLogin }) => {
                 <IonInput
                   type="tel" 
                   value={phone}
-				  placeholder='67621903'
+				  placeholder='7XXXXXXX'
                   onIonInput={handlePhoneInput}
                   maxlength={8}
                   style={{ fontSize: '26px', fontWeight: '500', borderBottom: '1px solid #d1d1d6' }}

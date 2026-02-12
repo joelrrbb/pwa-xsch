@@ -78,10 +78,24 @@ const ReferidosPage = () => {
   const handleSave = async () => {
     const isVoluntary = selectedSlot.member_type === 1;
 
-    if (isVoluntary && (!formData.phone || !formData.name)) {
-      alert('Nombre y Celular requeridos');
-      return;
+    // 1. Validaciones para Voluntario
+    if (isVoluntary) {
+      if (!formData.phone || !formData.name) {
+        alert('Nombre y Celular requeridos');
+        return;
+      }
+      // Validación de formato de celular (Empieza con 6 o 7 y tiene 8 dígitos)
+      const phoneRegex = /^[67]\d{7}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        setShowToast({ 
+          show: true, 
+          msg: 'Formato de celular incorrecto.', 
+          color: 'warning' 
+        });
+        return;
+      }
     }
+
     if (!isVoluntary && !formData.ci) {
       alert('CI requerido');
       return;
