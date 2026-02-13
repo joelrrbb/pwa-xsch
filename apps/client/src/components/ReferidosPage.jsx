@@ -244,8 +244,8 @@ const ReferidosPage = () => {
         <IonModal
           isOpen={showModal}
           onDidDismiss={() => setShowModal(false)}
-          initialBreakpoint={0.55}
-          breakpoints={[0, 0.55, 0.9]}
+          initialBreakpoint={0.5}
+          breakpoints={[0, 0.5, 0.9]}
         >
           <div className="ion-padding pt-8">
             <h2 className="text-xl font-bold mb-4 ml-[10px] ys-text">
