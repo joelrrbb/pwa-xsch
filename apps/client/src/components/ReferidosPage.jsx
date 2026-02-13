@@ -133,7 +133,7 @@ const ReferidosPage = () => {
 
         // --- LÓGICA DE WHATSAPP PARA VOLUNTARIOS ---
         if (isVoluntary) {
-          const mensaje = `¡Hola ${formData.name}! Bienvenido al equipo. Tu código de acceso es: ${accessCode}. Puedes ingresar desde la app.`;
+          const mensaje = `Tu código de acceso es: ${accessCode}\n\nIngresa aquí: https://pwa-xsch-client.vercel.app/`;
           const encodedMsg = encodeURIComponent(mensaje);
           
           // Suponiendo que el prefijo del país es +591 (Bolivia), ajústalo si es necesario
@@ -142,7 +142,7 @@ const ReferidosPage = () => {
           // Redirigir después de 1.5 segundos para que vea el Toast
           setTimeout(() => {
             window.open(whatsappUrl, '_blank');
-          }, 1500);
+          }, 800);
         }
 		
       } else {
