@@ -133,7 +133,12 @@ const ReferidosPage = () => {
 
         // --- LÓGICA DE WHATSAPP PARA VOLUNTARIOS ---
         if (isVoluntary) {
-          const mensaje = `Tu código de acceso es: ${accessCode}\n\nIngresa aquí: https://pwa-xsch-client.vercel.app/`;
+          const mensaje = 
+			`¡Hola! 👋 Bienvenido al equipo.\n\n` +
+			`🔑 Tu código de acceso es: *${accessCode}*\n\n` +
+			`Puedes ingresar a la plataforma desde este enlace:\n` +
+			`🚀 https://pwa-xsch-client.vercel.app/\n\n` +
+			`¡Estamos felices de tenerte con nosotros! ✨`;
           const encodedMsg = encodeURIComponent(mensaje);
           
           // Suponiendo que el prefijo del país es +591 (Bolivia), ajústalo si es necesario
@@ -239,8 +244,8 @@ const ReferidosPage = () => {
         <IonModal
           isOpen={showModal}
           onDidDismiss={() => setShowModal(false)}
-          initialBreakpoint={0.6}
-          breakpoints={[0, 0.6, 0.9]}
+          initialBreakpoint={0.55}
+          breakpoints={[0, 0.55, 0.9]}
         >
           <div className="ion-padding pt-8">
             <h2 className="text-xl font-bold mb-4 ml-[10px] ys-text">
