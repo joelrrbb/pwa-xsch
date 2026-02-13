@@ -21,25 +21,13 @@ import '@ionic/react/css/typography.css';
 
 setupIonicReact({ mode: 'ios' });
 
-// Variable global para evitar reinicializaciones molestas en desarrollo
 let isOneSignalInitialized = false;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [isPWA, setIsPWA] = useState(false);
 
   useEffect(() => {
-    // 1. Detección de PWA (JS puro)
-    const checkPWA = () => {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
-                           || window.navigator.standalone 
-                           || document.referrer.includes('android-app://');
-      setIsPWA(!!isStandalone);
-    };
-
-    checkPWA();
-
-    // 2. Inicializar OneSignal
+    // 1. Inicializar OneSignal (Solo intentará en navegadores compatibles)
     const initOneSignal = async () => {
       if (isOneSignalInitialized) return;
       try {
@@ -48,46 +36,33 @@ function App() {
           allowLocalhostAsSecureOrigin: true,
         });
         isOneSignalInitialized = true;
-        console.log("✅ OneSignal inicializado");
       } catch (e) {
-        if (e.message && e.message.includes("already initialized")) {
-          isOneSignalInitialized = true;
-        } else {
-          console.error("❌ Error OneSignal:", e);
-        }
+        console.warn("OneSignal no disponible o ya inicializado");
       }
     };
 
     initOneSignal();
 
-    // 3. Verificar Sesión
+    // 2. Verificar Sesión
     const session = localStorage.getItem('user_session');
     setIsAuthenticated(!!session);
   }, []);
 
-  // Mientras verificamos la sesión, no mostramos nada para evitar parpadeos
   if (isAuthenticated === null) return null;
 
-  // --- ESCENARIO 1: Navegador Web Normal ---
-  if (!isPWA) {
-    return (
-      <IonApp>
-        <LandingPage />
-      </IonApp>
-    );
-  }
-
-  // --- ESCENARIO 2: App Instalada (PWA) ---
   return (
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
+          {/* Ruta para la Landing Page (Accesible para todos en /welcome) */}
+          <Route exact path="/welcome" component={LandingPage} />
+
           {/* Login: Si ya está autenticado, va al home */}
           <Route exact path="/login">
             {isAuthenticated ? <Redirect to="/home" /> : <LoginPage onLogin={() => setIsAuthenticated(true)} />}
           </Route>
 
-          {/* Rutas Protegidas: Si no está autenticado, va al login */}
+          {/* Rutas Protegidas */}
           <Route exact path="/home">
             {!isAuthenticated ? <Redirect to="/login" /> : <HomePage />}
           </Route>
@@ -108,12 +83,13 @@ function App() {
             {!isAuthenticated ? <Redirect to="/login" /> : <ShopPage />}
           </Route>
 
-          {/* Redirección inicial */}
+          {/* Redirección inicial: 
+              Si no está logueado, lo enviamos al login (o a /welcome si prefieres) */}
           <Route exact path="/">
             <Redirect to={isAuthenticated ? "/home" : "/login"} />
           </Route>
 
-          {/* Fallback para rutas no encontradas */}
+          {/* Fallback */}
           <Route render={() => <Redirect to="/" />} />
         </IonRouterOutlet>
       </IonReactRouter>

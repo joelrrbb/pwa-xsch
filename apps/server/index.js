@@ -161,8 +161,10 @@ app.post('/api/add-user', async (req, res) => {
       manager_phone,
       member_type,
       tier,
-	  id_slot
+	  id_slot,
+	  access_code: incomingCode
     } = req.body;
+	
 
     // Validación básica
     if (!phone) {
@@ -170,7 +172,8 @@ app.post('/api/add-user', async (req, res) => {
     }
 
     const email = `${phone}@app.com`;
-    const access_code = generateSixDigitCode();
+    // const access_code = generateSixDigitCode();
+	const access_code = incomingCode || generateSixDigitCode();
 
     /* ==========================================================
        1️ VERIFICAR SI EL TELÉFONO YA EXISTE EN MEMBERS

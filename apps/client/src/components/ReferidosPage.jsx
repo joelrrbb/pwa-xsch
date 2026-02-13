@@ -42,6 +42,7 @@ const ReferidosPage = () => {
   const [fetching, setFetching] = useState(true);
   const [showToast, setShowToast] = useState({ show: false, msg: '', color: 'success' });
   const [formData, setFormData] = useState({ name: '', phone: '', ci: '', fechaNac: '' });
+  const generateAccessCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
   const slotsConfig = GET_USER_CONFIG(currentUser);
 
@@ -102,6 +103,7 @@ const ReferidosPage = () => {
     }
 
     setLoading(true);
+	const accessCode = isVoluntary ? generateAccessCode() : null;
     const payload = {
       name: isVoluntary ? formData.name : 'Invitado',
       phone: isVoluntary ? formData.phone : Math.floor(1000000 + Math.random() * 9000000).toString(),
@@ -111,8 +113,11 @@ const ReferidosPage = () => {
       tier: isVoluntary ? Number(selectedSlot.tier) : null,
       is_verified: isVoluntary ? 0 : 1,
       referrer_id: currentUser.id,
+	  access_code: accessCode,
       id_slot: selectedSlot.id_slot
     };
+	
+	console.log('📦 ENVIANDO PAYLOAD AL BACKEND:', payload);
 
     try {
       const response = await fetch(`${API_BASE_URL}/add-user`, {
@@ -125,6 +130,21 @@ const ReferidosPage = () => {
         setShowToast({ show: true, msg: '¡Registro exitoso!', color: 'success' });
         setShowModal(false);
         loadData();
+
+        // --- LÓGICA DE WHATSAPP PARA VOLUNTARIOS ---
+        if (isVoluntary) {
+          const mensaje = `¡Hola ${formData.name}! Bienvenido al equipo. Tu código de acceso es: ${accessCode}. Puedes ingresar desde la app.`;
+          const encodedMsg = encodeURIComponent(mensaje);
+          
+          // Suponiendo que el prefijo del país es +591 (Bolivia), ajústalo si es necesario
+          const whatsappUrl = `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
+
+          // Redirigir después de 1.5 segundos para que vea el Toast
+          setTimeout(() => {
+            window.open(whatsappUrl, '_blank');
+          }, 1500);
+        }
+		
       } else {
         setShowToast({ show: true, msg: result.msg, color: 'danger' });
       }
