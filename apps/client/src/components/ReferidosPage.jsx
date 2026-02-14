@@ -247,7 +247,7 @@ const ReferidosPage = () => {
         >
           <div className="ion-padding pt-8">
             <h2 className="text-xl font-bold mb-4 ml-[10px] ys-text">
-              Registro de {selectedSlot?.member_type === 1 ? 'Voluntario' : 'Invitado'}
+              Añadir {selectedSlot?.member_type === 1 ? 'Voluntario' : 'Invitado'}
             </h2>
 
             <div className="space-y-4">
