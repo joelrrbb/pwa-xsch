@@ -134,11 +134,10 @@ const ReferidosPage = () => {
         // --- LÓGICA DE WHATSAPP PARA VOLUNTARIOS ---
         if (isVoluntary) {
           const mensaje = 
-			`¡Hola! 👋 Bienvenido al equipo.\n\n` +
-			`Entra aquí para activar tu cuenta:\n` +
-            `👉 https://pwa-xsch-client.vercel.app/\n\n` +
+			`¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
+            `https://pwa-xsch-client.vercel.app/\n\n` +
             `Tu código es: *${accessCode}*\n\n` +
-			`¡Estamos felices de tenerte con nosotros! ✨`;
+			`¡Unidos por el cambio!`;
           const encodedMsg = encodeURIComponent(mensaje);
           
           // Suponiendo que el prefijo del país es +591 (Bolivia), ajústalo si es necesario
