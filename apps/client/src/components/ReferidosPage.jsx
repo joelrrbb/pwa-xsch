@@ -139,8 +139,6 @@ const ReferidosPage = () => {
             `Tu código es: *${accessCode}*\n\n` +
 			`¡Unidos por el cambio!`;
           const encodedMsg = encodeURIComponent(mensaje);
-          
-          // Suponiendo que el prefijo del país es +591 (Bolivia), ajústalo si es necesario
           const whatsappUrl = `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
 
           // Redirigir después de 1.5 segundos para que vea el Toast
