@@ -145,9 +145,7 @@ const ReferidosPage = () => {
           const whatsappUrl = `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
 
           // Redirigir después de 1.5 segundos para que vea el Toast
-          setTimeout(() => {
-            window.open(whatsappUrl, '_blank');
-          }, 1000);
+          window.location.assign(whatsappUrl);
         }
 		
       } else {
