@@ -136,8 +136,7 @@ const ReferidosPage = () => {
           const mensaje = 
 			`¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
             `https://pwa-xsch-client.vercel.app/\n\n` +
-            `Tu código es: *${accessCode}*\n\n` +
-			`¡Unidos por el cambio!`;
+            `Tu código es: *${accessCode}*\n\n`;
           const encodedMsg = encodeURIComponent(mensaje);
           const whatsappUrl = `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
 
