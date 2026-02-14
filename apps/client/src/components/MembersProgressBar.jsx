@@ -128,7 +128,7 @@ const MembersProgressBar = () => {
                     </span>
                   ))}
                 </h2>
-                <span className="ml-2 text-[9px] text-slate-600 font-bold uppercase tracking-widest italic">Votos</span>
+                
               </div>
             </div>
           </div>

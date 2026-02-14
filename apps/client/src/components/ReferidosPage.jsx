@@ -135,9 +135,9 @@ const ReferidosPage = () => {
         if (isVoluntary) {
           const mensaje = 
 			`¡Hola! 👋 Bienvenido al equipo.\n\n` +
-			`🔑 Tu código de acceso es: *${accessCode}*\n\n` +
-			`Puedes ingresar a la plataforma desde este enlace:\n` +
-			`🚀 https://pwa-xsch-client.vercel.app/\n\n` +
+			`Entra aquí para activar tu cuenta:\n` +
+            `👉 https://pwa-xsch-client.vercel.app/\n\n` +
+            `Tu código es: *${accessCode}*\n\n` +
 			`¡Estamos felices de tenerte con nosotros! ✨`;
           const encodedMsg = encodeURIComponent(mensaje);
           
@@ -147,7 +147,7 @@ const ReferidosPage = () => {
           // Redirigir después de 1.5 segundos para que vea el Toast
           setTimeout(() => {
             window.open(whatsappUrl, '_blank');
-          }, 800);
+          }, 1000);
         }
 		
       } else {
@@ -290,7 +290,7 @@ const ReferidosPage = () => {
 				onClick={handleSave}
 				disabled={loading}
 			>
-				{loading ? <IonSpinner name="crescent" /> : 'Confirmar Registro'}
+				{loading ? <IonSpinner name="crescent" /> : 'Confirmar'}
 			</IonButton>
 			</div>
           </div>
@@ -300,8 +300,8 @@ const ReferidosPage = () => {
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
-          initialBreakpoint={0.355}
-          breakpoints={[0, 0.355, 0.6]}
+          initialBreakpoint={0.335}
+          breakpoints={[0, 0.335, 0.6]}
         >
           <IonHeader className="ion-no-border">
             <IonToolbar>
