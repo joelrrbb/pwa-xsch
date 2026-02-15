@@ -7,6 +7,7 @@ import GeminiCommenter from '../components/GeminiCommenter';
 import PointsDisplay from '../components/PointsDisplay';
 import { supabase } from '../supabaseClient';
 import EventSwiper from '../components/EventSwiper';
+import PlanSwiper from '../components/PlanSwiper';
 import FooterInstitucional from '../components/FooterInstitucional';
 import QRAsistencia from '../components/QRAsistencia';
 
@@ -191,7 +192,7 @@ export default function HomePage() {
 
 </div>
   
-			  <EventSwiper />
+			  <PlanSwiper />
 			  
 			 		  
 					<TaskList userId={session.id} />

@@ -12,6 +12,7 @@ import ReferidosPage from './components/ReferidosPage';
 import DonationPage from './components/DonationPage';
 import DownloadsPage from './components/DownloadsPage';
 import ShopPage from './components/ShopPage';
+import PropuestaDetalle from './components/PropuestaDetalle';
 
 /* CSS de Ionic */
 import '@ionic/react/css/core.css';
@@ -88,6 +89,8 @@ function App() {
           <Route exact path="/">
             <Redirect to={isAuthenticated ? "/home" : "/login"} />
           </Route>
+		  
+		  <Route exact path="/propuesta/:id" component={PropuestaDetalle} />
 
           {/* Fallback */}
           <Route render={() => <Redirect to="/" />} />
