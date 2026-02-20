@@ -1,52 +1,32 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { IonText, IonIcon, IonProgressBar } from '@ionic/react';
-import { trophyOutline, people, flash, shieldCheckmarkOutline } from 'ionicons/icons';
+import { flash, shieldCheckmarkOutline } from 'ionicons/icons';
+import SlotCounter from 'react-slot-counter';
 import { supabase } from '../supabaseClient';
 
 const MembersProgressBar = () => {
   const [count, setCount] = useState(0);
-  const [displayValue, setDisplayValue] = useState("******");
+  const [maskValue, setMaskValue] = useState('*****');
   const [loading, setLoading] = useState(true);
-  const [dynamicTarget, setDynamicTarget] = useState(1);
-  const [extraProgress, setExtraProgress] = useState(0);
+  const [dynamicTarget, setDynamicTarget] = useState(5000);
   const [trending, setTrending] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  
+  // animKey es vital para forzar a que el componente "caiga" o gire de nuevo
+  const [animKey, setAnimKey] = useState(0);
 
+  // 1. Carga de datos de Supabase
   useEffect(() => {
     const fetchRealData = async () => {
       try {
-        // 1. Obtener conteo real de miembros
-        const { count: dbCount, error: countError } = await supabase
-          .from('members')
-          .select('*', { count: 'exact', head: true });
-
-        // 2. Obtener configuración de la tabla statistics (fakes y target)
-        const { data: stats, error: statsError } = await supabase
-          .from('statistics')
-          .select('fake_members_count, target_goal, trending')
-          .single();
-
-        if (countError || statsError) throw (countError || statsError);
-
-        // 3. Combinar datos
+        const { count: dbCount } = await supabase.from('members').select('*', { count: 'exact', head: true });
+        const { data: stats } = await supabase.from('statistics').select('*').single();
         const fakes = stats?.fake_members_count || 0;
-        const target = stats?.target_goal || 5000;
-        const finalInitialCount = (dbCount || 0) + fakes;
-		const trendingValue = stats?.trending ?? 0; 
-		
-        
-        console.log("Datos DB:", { real: dbCount, total: finalInitialCount });
-
-        setCount(finalInitialCount);
-        setDynamicTarget(target);
-		setTrending(trendingValue);
-
-        // Lógica de meta dinámica original
-        // if (finalInitialCount > target * 0.8) {
-          // setDynamicTarget(Math.ceil(finalInitialCount / 1000) * 1000 + 2000);
-        // }
+        setCount((dbCount || 0) + fakes);
+        setDynamicTarget(stats?.target_goal || 5000);
+        setTrending(stats?.trending ?? 0);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setCount(1000); // Fallback
+        setCount(100000);
       } finally {
         setLoading(false);
       }
@@ -54,146 +34,127 @@ const MembersProgressBar = () => {
     fetchRealData();
   }, []);
 
+  // 2. Lógica del giro infinito que SIEMPRE cae en *
   useEffect(() => {
-    if (loading) return;
-    let timeoutId;
-    const scheduleNextIncrement = () => {
-      const randomTime = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000;
-      timeoutId = setTimeout(() => {
-        setCount(prev => {
-          const nextValue = prev + 1;
-          if (nextValue > dynamicTarget * 0.9) setDynamicTarget(old => old + 1000);
-          return nextValue;
-        });
-        scheduleNextIncrement();
-      }, randomTime);
-    };
-    scheduleNextIncrement();
-    return () => clearTimeout(timeoutId);
-  }, [loading, dynamicTarget]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setExtraProgress(0.03);
-    }, 3000);
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      // Forzamos el cambio de Key para que el SlotCounter re-anime desde números hasta el asterisco
+      setAnimKey(prev => prev + 1);
+      setMaskValue('*****'); 
+    }, 3500); // Cada 4 segundos giran los números y caen en asterisco
+    
+    return () => clearInterval(interval);
   }, []);
 
+  // 3. Lógica de incremento real (Solo el último dígito se ve real)
   useEffect(() => {
-    if (count === 0) return;
-    let iterations = 0;
-    const strValue = count.toString();
-    const finalTargetStr = "*".repeat(Math.max(0, 7 - strValue.length)) + strValue;
+    if (loading) return;
+    const scheduleNext = () => {
+      const randomTime = Math.floor(Math.random() * 15000) + 5000;
+      return setTimeout(() => {
+        setCount(prev => prev + 1);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+        scheduleNext();
+      }, randomTime);
+    };
+    const timeoutId = scheduleNext();
+    return () => clearTimeout(timeoutId);
+  }, [loading]);
 
-    const animInterval = setInterval(() => {
-      setDisplayValue(
-        finalTargetStr.split("").map((char, index) => {
-          if (char === "*") return "*"; 
-          if (iterations > 10) return char;
-          return "0123456789"[Math.floor(Math.random() * 10)];
-        }).join("")
-      );
-      if (iterations > 15) clearInterval(animInterval);
-      iterations++;
-    }, 50);
-    return () => clearInterval(animInterval);
-  }, [count]);
-
-  const daysLeft = Math.max(0, Math.ceil((new Date('2026-03-22') - new Date()) / (1000 * 60 * 60 * 24)));
-  const totalPercentage = Math.min((count / dynamicTarget) + extraProgress, 0.99);
+  const daysLeft = Math.max(0, Math.ceil((new Date('2026-03-22') - new Date()) / 86400000));
+  const lastDigit = count.toString().slice(-1); 
+  const totalPercentage = Math.min(count / dynamicTarget, 0.99);
 
   return (
     <div className="relative overflow-hidden p-6 bg-gradient-to-br from-slate-950 via-black to-slate-900 rounded-[2.5rem] border border-green-500/20 shadow-2xl font-sans">
+      
+      {/* NOTIFICACIÓN TIPO ISLA */}
+      <div className={`absolute top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 transform ${
+        showToast ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
+      }`}>
+        <div className="min-w-[150px] justify-center bg-green-500 text-black text-[9px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] uppercase flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-black rounded-full animate-ping" />
+          Nuevo miembro añadido
+        </div>
+      </div>
+
       <div className="relative z-10">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-		  
-			<div className="relative">
-              <img src="/xsch-1.svg" alt="Logo" className="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(74,222,128,0.3)]" />
+            <div className="relative">
+              <img src="/xsch-1.svg" alt="Logo" className="w-14 h-14 object-contain" />
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-black animate-pulse" />
             </div>
-			
+            
             <div>
               <IonText className="text-[10px] font-black text-green-500/50 tracking-[0.4em] uppercase block mb-1">
                 Fuerza electoral
               </IonText>
-              <div className="flex items-baseline font-mono">
-                <h2 className="text-4xl font-black tracking-tighter">
-                  {displayValue.split(-2).map((char, i) => (
-                    <span 
-                      key={i} 
-                      className="font-bold text-white drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]"
-                    >
-                      {char}
-                    </span>
-                  ))}
-                </h2>
+              
+              <div className="flex items-baseline font-mono text-3xl font-black tracking-tighter text-white">
+                {/* MÁSCARA: Gira números y siempre aterriza en asterisco */}
+                <div className="opacity-30">
+                  <SlotCounter 
+                    key={animKey}
+                    value={maskValue} 
+                    duration={2.0} // Tiempo que tardan los números en caer al asterisco
+                    dummyCharacters={['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']}
+                    animateOnVisible={false}
+                  />
+                </div>
                 
+                {/* ÚLTIMO DÍGITO: El único que siempre muestra el valor real */}
+                <div className="drop-shadow-[0_0_12px_rgba(74,222,128,0.8)] ml-1">
+                  <SlotCounter 
+                    key={`digit-${count}`}
+                    value={lastDigit}
+                    duration={1.2}
+                    useMonospaceFont
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="text-right bg-green-500/10 p-2 rounded-xl border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
-            <div className="text-xl font-black text-green-400 italic leading-none">
-              +{trending}%
-            </div>
+          <div className="text-right bg-green-500/10 p-2 rounded-xl border border-green-500/20">
+            <div className="text-xl font-black text-green-400 italic leading-none">+{trending}%</div>
             <div className="text-[7px] font-bold text-slate-500 uppercase tracking-widest mt-1 text-center">Tendencia</div>
           </div>
-		  
         </div>
 
+        {/* BARRA DE PROGRESO */}
         <div className="relative mb-4">
-		
-		  <div className="flex justify-between items-end mb-3 px-1">
+          <div className="flex justify-between items-end mb-3 px-1 text-[7px] font-bold uppercase tracking-widest text-slate-600">
             <div className="flex flex-col">
-              <span className="text-[7px] font-bold text-slate-600 uppercase tracking-[0.2em]">Intención de apoyo</span>
-              <span className="text-[10px] font-mono text-slate-500 font-bold">{((count / dynamicTarget) * 100).toFixed(1)}%</span>
+              <span>Intención de apoyo</span>
+              <span className="text-[10px] font-mono text-slate-500">{(totalPercentage * 100).toFixed(1)}%</span>
             </div>
-            <div className="flex flex-col text-right">
-              <span className="text-[7px] font-bold text-green-500/50 uppercase tracking-[0.2em]">Proyección estimada</span>
-              <span className="text-[10px] font-mono text-green-400 font-bold">85.2%</span>
+            <div className="flex flex-col text-right text-green-500/50">
+              <span>Proyección estimada</span>
+              <span className="text-[10px] font-mono text-green-400">85.2%</span>
             </div>
           </div>
-          
-
-          <div className="relative group">
-            {/* Animación de Shimmer sobre la barra */}
-            <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden rounded-full">
-              <div className="w-full h-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full" />
-            </div>
-
-            <IonProgressBar 
-              type="buffer"
-              color="success"
-              value={totalPercentage} 
-              buffer={totalPercentage + 0.15} // El buffer da sensación de "capacidad de reserva"
-              className="h-3 rounded-full overflow-hidden bg-white/5 border border-white/5 shadow-inner"
-            />
-          </div>
+          <IonProgressBar 
+            type="buffer"
+            color="success"
+            value={totalPercentage} 
+            buffer={totalPercentage + 0.1}
+            className="h-3 rounded-full overflow-hidden bg-white/5"
+          />
         </div>
 
+        {/* FOOTER */}
         <div className="flex justify-between items-center bg-white/[0.02] border border-white/5 rounded-2xl p-3">
           <div className="flex items-center gap-2">
             <IonIcon icon={shieldCheckmarkOutline} className="text-slate-600 text-sm" />
-            <span className="text-[10px] text-slate-500 font-bold uppercase">
-              Datos sincronizados
-            </span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase">Datos sincronizados</span>
           </div>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-xl">
-            <IonIcon icon={flash} className="text-green-400 text-xs animate-bounce" />
-            <span className="text-[10px] font-black text-green-400 uppercase tracking-tighter">
-              Faltan {daysLeft} días
-            </span>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-xl font-black text-green-400 text-[10px]">
+            <IonIcon icon={flash} className="animate-bounce" />
+            <span>Faltan {daysLeft} días</span>
           </div>
         </div>
       </div>
-      
-      <style>{`
-        @keyframes shimmer {
-          100% { transform: translateX(100%); }
-        }
-      `}</style>
     </div>
   );
 };

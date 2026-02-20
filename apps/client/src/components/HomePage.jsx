@@ -10,6 +10,11 @@ import EventSwiper from '../components/EventSwiper';
 import PlanSwiper from '../components/PlanSwiper';
 import FooterInstitucional from '../components/FooterInstitucional';
 import QRAsistencia from '../components/QRAsistencia';
+import ImgModal from '../components/ImgModal';
+import { useOneTimeModal } from '../hooks/usePromoModal';
+
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 export default function HomePage() {
 		
@@ -28,6 +33,12 @@ export default function HomePage() {
     }
     return false;
   });
+  
+  const [showShopPromo, closeShopPromo] = useOneTimeModal(
+    'has_seen_shop_promo_v1', 
+    session?.is_verified === 2 // Condición: solo si está verificado
+  );
+  
   
   const getMemberTypeName = (type) => {
   const types = {
@@ -66,12 +77,48 @@ export default function HomePage() {
         setShowModal(data.is_verified !== 2);
       }
 	  
-	  if (Number(data.is_verified) === 2 && Number(data.points) === 10) {
+	  const hasSeenWelcome = localStorage.getItem('has_seen_welcome_v1');
+      
+      if (Number(data.is_verified) === 2 && !hasSeenWelcome) {
         setShowAlert(true);
+        localStorage.setItem('has_seen_welcome_v1', 'true');
       }
+	 
     };
     syncFromSupabase();
   }, []);
+  
+  useEffect(() => {
+    // Solo iniciar si terminó de cargar, está verificado y no hay alertas/modales activos
+    if (!loading && session?.is_verified === 2 && !showModal && !showAlert) {
+      
+      const hasSeenTour = localStorage.getItem('has_seen_tour_v1');
+      
+      if (!hasSeenTour) {
+        const driverObj = driver({
+          showProgress: true,
+          nextBtnText: 'Siguiente',
+          prevBtnText: 'Atrás',
+          doneBtnText: '¡Entendido!',
+          steps: [
+            
+            { 
+              element: '#activities-area', 
+              popover: { title: 'Tareas y Actividades', description: '¡Este es el corazón de la app! Completa tareas diarias para sumar puntos y ayudar a la red.', side: "top", align: 'center' } 
+            },
+            
+          ]
+        });
+
+        // Pequeño delay para asegurar que el DOM esté listo tras el loading
+        setTimeout(() => {
+          driverObj.drive();
+          localStorage.setItem('has_seen_tour_v1', 'true');
+        }, 800);
+      }
+    }
+  }, [loading, session, showModal, showAlert]);
+  
 
   const handleLogout = () => {
     localStorage.removeItem('user_session');
@@ -178,24 +225,44 @@ export default function HomePage() {
   </IonRouterLink>
 
   {/* Imagen 2: Donación */}
-  <IonRouterLink 
-    routerLink="/donation" 
-    routerDirection="forward" 
-    style={{ flex: 1 }}
-  >
-    <img 
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1770272578/b2_kv2uvm.webp" 
-      alt="Donar"
-      style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
-    />
-  </IonRouterLink>
+{Number(session.member_type) === 1 ? (
+        <IonRouterLink
+          routerLink="/support"
+          routerDirection="forward"
+          style={{ flex: 1 }}
+        >
+          <img
+            src="https://res.cloudinary.com/dljymqntm/image/upload/v1770766512/banner-shop_et7y3t.webp"
+            alt="Support"
+            style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
+          />
+        </IonRouterLink>
+      ) : (
+        <IonRouterLink
+          routerLink="/donation"
+          routerDirection="forward"
+          style={{ flex: 1 }}
+        >
+          <img
+            src="https://res.cloudinary.com/dljymqntm/image/upload/v1770272578/b2_kv2uvm.webp"
+            alt="Donar"
+            style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
+          />
+        </IonRouterLink>
+      )}
+    </div>
 
-</div>
-  
-			  <PlanSwiper />
-			  
-			 		  
-					<TaskList userId={session.id} />
+    {/* Swiper Condicional: PlanSwiper para Voluntarios, EventSwiper para el resto */}
+    {Number(session.member_type) === 1 ? (
+      <PlanSwiper />
+    ) : (
+      <EventSwiper />
+    )}
+				 		  
+					{/* ID para el Tour: Área de Actividades */}
+                  <div id="activities-area" style={{ marginTop: '20px' }}>
+                    <TaskList userId={session.id} />
+                  </div>
     
 						{/* Nuevo componente de Gemini */}
 					<GeminiCommenter userId={session.id} />
@@ -219,6 +286,13 @@ export default function HomePage() {
 					}} 
 				/>
 				</IonRouterLink>
+				
+				<ImgModal 
+          isOpen={showShopPromo}
+          onClose={closeShopPromo}
+          imageSrc="https://image2.suning.cn//uimg/cms/img/175705936352970940.png?format=is"
+          targetRoute="/shop"
+        />
 
 
 				</>

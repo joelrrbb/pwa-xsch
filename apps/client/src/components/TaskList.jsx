@@ -102,7 +102,7 @@ const TaskList = ({ userId }) => {
 
   return (
     <div>
-      <IonText color="dark"><h2 className="ys-text">Tareas disponibles</h2></IonText>
+      <IonText color="dark"><h2 className="ys-text">Actividades</h2></IonText>
       <WhatsAppBanner />
 
       {tasks.map(task => {

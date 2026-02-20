@@ -15,7 +15,7 @@ import {
   IonText
 } from '@ionic/react';
 import { useParams } from 'react-router-dom';
-import { shareSocialOutline, mapOutline} from 'ionicons/icons';
+import { mapOutline} from 'ionicons/icons';
 import { supabase } from '../supabaseClient';
 
 const PropuestaDetalle = () => {
@@ -43,12 +43,7 @@ const PropuestaDetalle = () => {
     fetchPlan();
   }, [id]);
 
-  const compartirWhatsApp = () => {
-    const url = window.location.href;
-    const texto = `Mira esta propuesta para Chuquisaca: ${plan?.title} - ${url}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
-  };
-
+ 
   if (loading) {
     return (
       <IonPage>
@@ -102,15 +97,6 @@ const PropuestaDetalle = () => {
           
         </div>
       </IonContent>
-
-      <IonFooter className="ion-no-border">
-        <IonToolbar style={{ padding: '10px' }}>
-          <IonButton expand="block" color="success" onClick={compartirWhatsApp} shape="round">
-            <IonIcon slot="start" icon={shareSocialOutline} />
-            Compartir Propuesta
-          </IonButton>
-        </IonToolbar>
-      </IonFooter>
     </IonPage>
   );
 };

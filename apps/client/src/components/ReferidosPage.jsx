@@ -191,44 +191,68 @@ const ReferidosPage = () => {
 			</h2>
 		</div>
 		
-        <IonGrid>
-          <IonRow>
-            {slotsConfig.map((config, i) => {
-              const isVoluntario = config.member_type === 1;
-              const data = referidosDB.find(d => d.id_slot === config.id_slot);
-			  const isRejected = data?.is_verified === 3;
+       <div className="px-3 mt-4"> {/* Contenedor con margen lateral para que no toque los bordes */}
+  <IonGrid className="ion-no-padding">
+    <IonRow>
+      {slotsConfig.map((config, i) => {
+        const isVoluntario = config.member_type === 1;
+        const data = referidosDB.find(d => d.id_slot === config.id_slot);
+        const isRejected = data?.is_verified === 3;
+        const isConfirmed = data?.is_verified >= 2;
+        const isPending = data && data.is_verified < 2;
 
-              return (
-                <IonCol size="3" key={i} className="flex flex-col items-center mb-4">
-                  <div
-                    onClick={() => openSlot(config, data)}
-						className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all relative border-2
-						${isRejected ? 'bg-red-500 border-red-600 text-white' : 
-						data?.is_verified >= 2 ? 'bg-green-500 border-green-600 text-white' : 
-						data ? 'bg-amber-100 border-amber-400 text-amber-600 shadow-inner' : 
-						isVoluntario ? 'bg-white border-orange-400 border-dashed text-orange-400' : 
-						'bg-gray-100 border-gray-200 text-gray-400'}
-					`}
-					>
-                    {isRejected ? <IonIcon icon={closeCircleOutline} /> : // Icono de re-intento si está rechazado
-					data?.is_verified >= 2 ? <IonIcon icon={checkmarkCircle} /> : 
-					data ? <IonIcon icon={timeOutline} /> : 
-					<IonIcon icon={personAddOutline} className="opacity-30" />}
-                    
-                    {isVoluntario && (
-                      <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">
-                        T-{config.tier}
-                      </div>
-                    )}
-                  </div>
-                  <span className={`text-[10px] mt-1 font-bold uppercase ${data ? 'text-slate-700' : 'text-gray-400'}`}>
-						{isRejected ? 'Rechazado' : (data?.is_verified >= 1 ? data.name : (isVoluntario ? 'Voluntario' : 'Invitado'))}
-				  </span>
-                </IonCol>
-              );
-            })}
-          </IonRow>
-        </IonGrid>
+        // Lógica de estilos
+        let cardStyle = "bg-gray-50 border-gray-100 text-gray-400";
+        let icon = personAddOutline;
+        let badgeColor = "bg-gray-400";
+        
+        if (isRejected) {
+          cardStyle = "bg-red-50 border-red-200 text-red-500 shadow-sm";
+          icon = closeCircleOutline;
+          badgeColor = "bg-red-500";
+        } else if (isConfirmed) {
+          cardStyle = "bg-green-50 border-green-200 text-green-600 shadow-sm";
+          icon = checkmarkCircle;
+          badgeColor = "bg-green-500";
+        } else if (isPending) {
+          cardStyle = "bg-amber-50 border-amber-200 text-amber-600 shadow-sm";
+          icon = timeOutline;
+          badgeColor = "bg-amber-500";
+        } else if (isVoluntario) {
+          cardStyle = "bg-orange-50 border-orange-200 border-dashed text-orange-400";
+          badgeColor = "bg-orange-500";
+        }
+
+        return (
+          <IonCol size="3" key={i} className="p-[5px]"> {/* Espaciado interno entre slots */}
+            <div
+              onClick={() => openSlot(config, data)}
+              className={`relative flex flex-col items-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] transition-all active:scale-90 ${cardStyle}`}
+            >
+              {/* Badge superior reducido */}
+              <div className={`absolute -top-1.5 right-1 ${badgeColor} text-white text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm uppercase tracking-tighter`}>
+                {isVoluntario ? `T-${config.tier}` : 'Ref'}
+              </div>
+
+              {/* Icono central */}
+              <div className="mb-1">
+                <IonIcon icon={icon} className="text-2xl" />
+              </div>
+
+              {/* Nombre / Estado */}
+              <span className="text-[8px] font-black uppercase tracking-tighter text-center px-1 truncate w-full leading-tight">
+                {isRejected ? 'Rechazado' : 
+                 isConfirmed ? (data?.name?.split(' ')[0] || 'OK') : 
+                 isPending ? 'Espera' : 
+                 (isVoluntario ? 'Volunt.' : 'Invitado')}
+              </span>
+            </div>
+          </IonCol>
+        );
+      })}
+    </IonRow>
+  </IonGrid>
+</div>
 		
 		
 		
@@ -294,8 +318,8 @@ const ReferidosPage = () => {
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
-          initialBreakpoint={0.335}
-          breakpoints={[0, 0.335, 0.6]}
+          initialBreakpoint={0.365}
+          breakpoints={[0, 0.365, 0.6]}
         >
           <IonHeader className="ion-no-border">
             <IonToolbar>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { IonRouterLink, IonSpinner, IonText } from '@ionic/react';
+import { IonRouterLink, IonSpinner } from '@ionic/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 
 // Estilos de Swiper
@@ -17,10 +17,10 @@ const PlanSwiper = () => {
     const fetchPlanes = async () => {
       try {
         const { data, error } = await supabase
-          .from('planes') // Cambiado a tu nueva tabla
+          .from('planes')
           .select('*')
-          .eq('is_active', true) // Filtramos solo los activos
-          .order('priority', { ascending: true }); // Orden por prioridad
+          .eq('is_active', true)
+          .order('priority', { ascending: true });
 
         if (error) throw error;
         if (data) setPlanes(data);
@@ -33,88 +33,95 @@ const PlanSwiper = () => {
     fetchPlanes();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="ion-text-center ion-padding" style={{ height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <IonSpinner name="crescent" color="primary" />
-      </div>
-    );
-  }
-
-  if (!planes.length) return null;
+  // Si no hay planes y ya cargó, no mostramos nada
+  if (!loading && !planes.length) return null;
 
   return (
     <div style={{ marginBottom: '25px', marginTop: '10px' }}>
-      {/* Encabezado del Swiper */}
+      {/* Encabezado del Swiper: SIEMPRE VISIBLE */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingLeft: '5px' }}>
         <img src="/xsch-1.svg" alt="Logo" style={{ width: '40px', height: '40px' }} />
         <div>
-          <div className="ys-text">Plan Chuquisaca</div>
-          <div style={{ fontSize: '.85rem', color: '#64748b' }}>Acción inmediata, visión a largo plazo.</div>
+          <div className="ys-text">Propuestas</div>
+          <div style={{ fontSize: '.85rem', color: '#64748b' }}>Proyectos que vienen a cambiarlo todo.</div>
         </div>
       </div>
 
       <style>
         {`
+			.plan-swiper .swiper-pagination-bullet {
+				width: 6px;
+				height: 6px;
+			}
           .plan-swiper .swiper-pagination-bullet-active {
-            background: #000 !important;
-            width: 16px;
+            background: #fff !important;
+            width: 12px;
             border-radius: 4px;
             transition: all 0.3s ease;
           }
         `}
       </style>
 
-      <Swiper
-        className="plan-swiper"
-        pagination={{ clickable: true }}
-        modules={[Autoplay, Pagination]}
-        loop={planes.length > 1}
-        autoplay={{ delay: 4500, disableOnInteraction: false }}
-        style={{ borderRadius: '20px', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}
-      >
-        {planes.map((plan) => (
-          <SwiperSlide key={plan.id}>
-            {/* Navegamos a una ruta de detalle pasando el ID */}
-            <IonRouterLink
-              routerLink={`/propuesta/${plan.id}`}
-              routerDirection="forward"
-              style={{ display: 'block', textDecoration: 'none' }}
-            >
-              <div style={{ position: 'relative', height: '150px' }}>
-                <img
-                  src={plan.url_image_swiper} // Nuevo campo
-                  alt={plan.title}
-                  loading="lazy"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-                
-                {/* Gradiente sutil para que el título sea legible */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: '60%',
-                  background: 'linear-gradient(transparent, rgba(0,0,0,0.5))',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  padding: '15px'
-                }}>
-                  <IonText className='ys-text-sm' style={{ color: 'white', fontWeight: '700', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
-                    {plan.title}
-                  </IonText>
+      {/* Solo mostramos el Spinner o el Swiper aquí abajo */}
+      {loading ? (
+        <div style={{ 
+          height: '140px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          background: '#f8fafc',
+          borderRadius: '20px' 
+        }}>
+          <IonSpinner name="crescent" color="primary" />
+        </div>
+      ) : (
+        <Swiper
+          className="plan-swiper"
+          pagination={{ clickable: true }}
+          modules={[Autoplay, Pagination]}
+          loop={planes.length > 1}
+          autoplay={{ delay: 4500, disableOnInteraction: false }}
+          style={{ borderRadius: '20px', overflow: 'hidden', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}
+        >
+          {planes.map((plan) => (
+            <SwiperSlide key={plan.id}>
+              <IonRouterLink
+                routerLink={`/propuesta/${plan.id}`}
+                routerDirection="forward"
+                style={{ display: 'block', textDecoration: 'none' }}
+              >
+                <div style={{ position: 'relative', height: '140px' }}>
+                  <img
+                    src={plan.url_image_swiper}
+                    alt={plan.title}
+                    loading="lazy"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '60%',
+                    background: 'linear-gradient(transparent, rgba(57, 255, 20, 0.4))',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    padding: '15px'
+                  }}>
+                    {/* Aquí podrías renderizar plan.title si lo deseas */}
+                  </div>
                 </div>
-              </div>
-            </IonRouterLink>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+              </IonRouterLink>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
     </div>
   );
 };

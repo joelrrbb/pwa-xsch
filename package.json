@@ -17,5 +17,8 @@
   "devDependencies": {
     "concurrently": "^9.2.1",
     "turbo": "latest"
+  },
+  "dependencies": {
+    "driver.js": "^1.4.0"
   }
 }
