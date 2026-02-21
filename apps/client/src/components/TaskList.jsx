@@ -104,12 +104,50 @@ const TaskList = ({ userId }) => {
     <div>
       <IonText color="dark"><h2 className="ys-text">Actividades</h2></IonText>
       <WhatsAppBanner />
+	  
+	  {/* VALIDACIÓN DE ESTADO VACÍO */}
+{tasks.length === 0 ? (
+  <IonCard style={{ 
+  margin: '12px 0', 
+  borderRadius: '12px', 
+  boxShadow: 'none', 
+  border: '1px dashed #ccc',
+  background: '#fafafa' 
+}}>
+  <IonCardContent style={{ 
+    display: 'flex', 
+    padding: '16px', 
+    gap: '12px', 
+    alignItems: 'center',
+    minHeight: '90px' // Altura aproximada de tus tareas originales
+  }}>
+   
+    <div style={{ flexGrow: 1 }}>
+      <h2 className="ys-text" style={{ 
+        margin: '0', 
+        color: '#000', 
+        fontSize: '1.1rem',
+        fontWeight: '700' 
+      }}>
+        ✅ ¡Todo listo por ahora!
+      </h2>
+      
+      <p style={{ 
+        margin: '4px 0 0', 
+        fontSize: '0.85rem',  
+      }}>
+        No hay actividades pendientes. Te avisaremos cuando lleguen nuevas tareas.
+      </p>
+    </div>
 
-      {tasks.map(task => {
-        const remainingText = getTimeRemainingText(task.deadline);
-        return (
-          <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '12px' }}>
-            <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px' }}>
+  </IonCardContent>
+</IonCard>
+) : (
+  tasks.map(task => {
+    const remainingText = getTimeRemainingText(task.deadline);
+    return (
+      <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '12px' }}>
+        <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px' }}>
               
               <div style={{ width: '50px', height: '50px', flexShrink: 0 }}>
                 <IonImg src={task.thumbnail} style={{ borderRadius: '8px', objectFit: 'cover', height: '100%' }} />
@@ -143,9 +181,13 @@ const TaskList = ({ userId }) => {
                 </div>
               </div>
             </IonCardContent>
-          </IonCard>
-        );
-      })}
+      </IonCard>
+    );
+  })
+)}
+
+
+    
 
       <IonToast
         isOpen={showToast.show}

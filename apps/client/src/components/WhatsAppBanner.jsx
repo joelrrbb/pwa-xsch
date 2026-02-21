@@ -69,15 +69,10 @@ const WhatsAppBanner = () => {
 
       <IonButton 
         size="small"
+		color="success"
         style={{ 
-          '--background': '#48dd55', 
           '--color': '#fff',         
-          '--border-radius': '8px',
-          '--box-shadow': 'none',
           fontWeight: 'bold',
-          margin: 0,
-          minWidth: '80px',
-          height: '36px'
         }}
         onClick={handleSendClick}
       >

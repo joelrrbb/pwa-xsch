@@ -214,11 +214,11 @@ export default function HomePage() {
   {/* Imagen 1: Referidos */}
   <IonRouterLink 
     routerLink="/referidos" 
-    routerDirection="forward" 
+    routerDirection="forward"
     style={{ flex: 1 }}
   >
     <img 
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1770272579/b1_uqz9es.webp" 
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771699858/b1_uqz9es_eywvr3.webp" 
       alt="Referidos"
       style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
     />
@@ -232,7 +232,7 @@ export default function HomePage() {
           style={{ flex: 1 }}
         >
           <img
-            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771601626/colab_g1uoj1.webp"
+            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771701088/support_i2xzn4.webp"
             alt="Support"
             style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
           />

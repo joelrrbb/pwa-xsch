@@ -133,7 +133,7 @@ const GeminiCommenter = () => {
           <div style={styles.buttonGroup}>
             
             {/* Bot?n Generar (75% del ancho) */}
-            <button 
+            <button
               onClick={generateComment} 
               disabled={loading}
               style={{
@@ -157,7 +157,7 @@ const GeminiCommenter = () => {
               disabled={!comment || loading}
               style={{
                 ...styles.secondaryBtn,
-                background: comment ? (copied ? '#2dd36f' : '#0052cc') : '#f0f4f9',
+                background: comment ? (copied ? '#2dd36f' : '#24ad4a') : '#f0f4f9',
                 color: comment ? '#fff' : '#0052cc',
               }}
             >
@@ -171,7 +171,7 @@ const GeminiCommenter = () => {
         </IonCardContent>
       </IonCard>
 
-      {/* Notificación Flotante */}
+      {/* NotificaciÃ³n Flotante */}
       <IonToast
         isOpen={showToast}
         onDidDismiss={() => setShowToast(false)}
@@ -204,7 +204,7 @@ const styles = {
     alignItems: 'center'
   },
   iaIcon: {
-    background: 'linear-gradient(135deg, #1a1a1a 0%, #444 100%)',
+    background: 'linear-gradient(135deg, #2dd55b 0%, #1a8a3a 100%)',
     width: '38px',
     height: '38px',
     borderRadius: '12px',
@@ -257,7 +257,7 @@ const styles = {
   primaryBtn: {
     flex: 3,
     height: '54px',
-    background: '#1a1a1a',
+    background: '#2dd55b',
     color: '#fff',
     border: 'none',
     borderRadius: '16px',
