@@ -232,7 +232,7 @@ export default function HomePage() {
           style={{ flex: 1 }}
         >
           <img
-            src="https://res.cloudinary.com/dljymqntm/image/upload/v1770766512/banner-shop_et7y3t.webp"
+            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771601626/colab_g1uoj1.webp"
             alt="Support"
             style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
           />

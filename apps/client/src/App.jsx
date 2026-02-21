@@ -12,6 +12,7 @@ import ReferidosPage from './components/ReferidosPage';
 import DonationPage from './components/DonationPage';
 import DownloadsPage from './components/DownloadsPage';
 import ShopPage from './components/ShopPage';
+import SupportPage from './components/SupportPage';
 import PropuestaDetalle from './components/PropuestaDetalle';
 
 /* CSS de Ionic */
@@ -83,6 +84,11 @@ function App() {
           <Route exact path="/shop">
             {!isAuthenticated ? <Redirect to="/login" /> : <ShopPage />}
           </Route>
+		  
+		  {/* Ruta de Soporte / Aporte Voluntario */}
+		  <Route exact path="/support">
+			{!isAuthenticated ? <Redirect to="/login" /> : <SupportPage />}
+		  </Route>
 
           {/* Redirección inicial: 
               Si no está logueado, lo enviamos al login (o a /welcome si prefieres) */}

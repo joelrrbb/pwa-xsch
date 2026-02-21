@@ -78,7 +78,7 @@ const ShopPage = () => {
 
     const message = `*📦 NUEVO PEDIDO*\n\n${pedidoTexto}\n\n*Total a pagar: Bs.${total}*`;
     const url = `https://api.whatsapp.com/send?phone=591${whatsapp}&text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    window.location.assign(url);
   };
 
   return (

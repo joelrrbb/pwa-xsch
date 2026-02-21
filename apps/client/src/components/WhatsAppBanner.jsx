@@ -23,7 +23,7 @@ const WhatsAppBanner = () => {
   const handleSendClick = () => {
     // Limpia el número de caracteres no numéricos
     const cleanPhone = managerPhone.toString().replace(/\D/g, '');
-    window.open(`https://wa.me/591${cleanPhone}`, '_blank');
+    window.location.assign(`https://wa.me/591${cleanPhone}`);
   };
 
   return (
