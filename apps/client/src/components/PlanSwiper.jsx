@@ -72,7 +72,7 @@ const PlanSwiper = () => {
           background: '#f8fafc',
           borderRadius: '20px' 
         }}>
-          <IonSpinner name="crescent" color="primary" />
+          <IonSpinner name="crescent" color="dark" />
         </div>
       ) : (
         <Swiper
