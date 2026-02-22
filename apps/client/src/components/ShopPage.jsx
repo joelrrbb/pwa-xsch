@@ -100,7 +100,7 @@ const ShopPage = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/home" icon={chevronBackOutline} text="Atrás" mode="ios" />
           </IonButtons>
-          <IonTitle className="ys-text">Catálogo</IonTitle>
+          <IonTitle className="ys-text">Utilería</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -136,7 +136,7 @@ const ShopPage = () => {
                         </div>
                       ) : (
                         <IonButton
-                          expand="block" fill="solid" color="dark" mode="ios" size="small"
+                          expand="block" fill="solid" color="success" mode="ios" size="small"
                           style={{ '--border-radius': '12px', height: '38px', fontWeight: '700', fontSize:'1rem' }}
                           onClick={() => addToCart(product)}
                         >
@@ -157,7 +157,7 @@ const ShopPage = () => {
           <IonRow className="ion-align-items-center ion-padding-horizontal">
             <IonCol size="4">
               <IonText color="medium" style={{ fontSize: '10px', letterSpacing: '1px', marginLeft:'15px' }}>TOTAL</IonText>
-              <h2 style={{marginLeft:'15px' }} className="footer-total">${total}</h2>
+              <h2 style={{marginLeft:'15px' }} className="footer-total">Bs. {total}</h2>
             </IonCol>
             <IonCol size="8">
               <IonButton

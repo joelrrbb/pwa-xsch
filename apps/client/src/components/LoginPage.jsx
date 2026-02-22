@@ -141,6 +141,7 @@ const LoginPage = ({ onLogin }) => {
               </IonText>
               <IonInputOtp
 			    color="success"
+				className="custom"
                 ref={otpRef} 
                 length={6} 
                 style={{ fontSize: '26px', fontWeight: '500' }} 

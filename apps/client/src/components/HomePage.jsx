@@ -10,8 +10,6 @@ import EventSwiper from '../components/EventSwiper';
 import PlanSwiper from '../components/PlanSwiper';
 import FooterInstitucional from '../components/FooterInstitucional';
 import QRAsistencia from '../components/QRAsistencia';
-import ImgModal from '../components/ImgModal';
-import { useOneTimeModal } from '../hooks/usePromoModal';
 
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -33,12 +31,6 @@ export default function HomePage() {
     }
     return false;
   });
-  
-  const [showShopPromo, closeShopPromo] = useOneTimeModal(
-    'has_seen_shop_promo_v1', 
-    session?.is_verified === 2 // Condición: solo si está verificado
-  );
-  
   
   const getMemberTypeName = (type) => {
   const types = {
@@ -66,7 +58,7 @@ export default function HomePage() {
     const syncFromSupabase = async () => {
       const { data, error } = await supabase
         .from('members')
-        .select('is_verified, identity_card, birth_date, points, tier, member_type, manager_phone,name')
+        .select('is_verified, identity_card, birth_date, points, tier, member_type, manager_phone,name, created_at')
         .eq('id', session.id)
         .maybeSingle();
 
@@ -88,36 +80,35 @@ export default function HomePage() {
     syncFromSupabase();
   }, []);
   
-  useEffect(() => {
+  // useEffect(() => {
     // Solo iniciar si terminó de cargar, está verificado y no hay alertas/modales activos
-    if (!loading && session?.is_verified === 2 && !showModal && !showAlert) {
+    // if (!loading && session?.is_verified === 2 && !showModal && !showAlert) {
       
-      const hasSeenTour = localStorage.getItem('has_seen_tour_v1');
+      // const hasSeenTour = localStorage.getItem('has_seen_tour_v1');
       
-      if (!hasSeenTour) {
-        const driverObj = driver({
-          showProgress: true,
-          nextBtnText: 'Siguiente',
-          prevBtnText: 'Atrás',
-          doneBtnText: '¡Entendido!',
-          steps: [
+      // if (!hasSeenTour) {
+        // const driverObj = driver({
+          // showProgress: true,
+          // nextBtnText: 'Siguiente',
+          // prevBtnText: 'Atrás',
+          // doneBtnText: '¡Entendido!',
+          // steps: [
             
-            { 
-              element: '#activities-area', 
-              popover: { title: 'Tareas y Actividades', description: '¡Este es el corazón de la app! Completa tareas diarias para sumar puntos y ayudar a la red.', side: "top", align: 'center' } 
-            },
+            // { 
+              // element: '#activities-area', 
+              // popover: { title: 'Tareas y Actividades', description: '¡Este es el corazón de la app! Completa tareas diarias para sumar puntos y ayudar a la red.', side: "top", align: 'center' } 
+            // },
             
-          ]
-        });
+          // ]
+        // });
 
-        // Pequeño delay para asegurar que el DOM esté listo tras el loading
-        setTimeout(() => {
-          driverObj.drive();
-          localStorage.setItem('has_seen_tour_v1', 'true');
-        }, 800);
-      }
-    }
-  }, [loading, session, showModal, showAlert]);
+        // setTimeout(() => {
+          // driverObj.drive();
+          // localStorage.setItem('has_seen_tour_v1', 'true');
+        // }, 800);
+      // }
+    // }
+  // }, [loading, session, showModal, showAlert]);
   
 
   const handleLogout = () => {
@@ -218,7 +209,7 @@ export default function HomePage() {
     style={{ flex: 1 }}
   >
     <img 
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771699858/b1_uqz9es_eywvr3.webp" 
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771728897/b1_uqz9es_lvyshv.webp" 
       alt="Referidos"
       style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
     />
@@ -267,34 +258,47 @@ export default function HomePage() {
 						{/* Nuevo componente de Gemini */}
 					<GeminiCommenter userId={session.id} />
 					
-					{/* Banner de la Tienda (Acceso a Shop) */}
-				<IonRouterLink 
-					routerLink="/shop" 
-					routerDirection="forward" 
-					style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
-				>
-				<img 
-					src="https://res.cloudinary.com/dljymqntm/image/upload/v1770766715/banner-shop_dchwya.jpg"
-					alt="Tienda"
-					style={{ 
-					width: '100%', 
-					height: '120px', 
-					objectFit: 'cover', 
-					borderRadius: '18px', 
-					display: 'block',
-					boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
-					}} 
-				/>
-				</IonRouterLink>
-				
-				<ImgModal 
-          isOpen={showShopPromo}
-          onClose={closeShopPromo}
-          imageSrc="https://image2.suning.cn//uimg/cms/img/175705936352970940.png?format=is"
-          targetRoute="/shop"
-        />
-
-
+				{/* Banner Condicional: Descargas para Voluntarios (1), Tienda para el resto (>=2) */}
+{Number(session.member_type) === 1 ? (
+  <IonRouterLink
+    routerLink="/downloads"
+    routerDirection="forward"
+    style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
+  >
+    <img
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771714558/digital_s9k6rj.webp"
+      alt="Descargas"
+      style={{
+        width: '100%',
+        height: '120px',
+        objectFit: 'cover',
+        borderRadius: '18px',
+        display: 'block',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+      }}
+    />
+  </IonRouterLink>
+) : (
+  <IonRouterLink
+    routerLink="/shop"
+    routerDirection="forward"
+    style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
+  >
+    <img
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771713808/Untitled-2_a4b6l0.webp"
+      alt="Tienda"
+      style={{
+        width: '100%',
+        height: '120px',
+        objectFit: 'cover',
+        borderRadius: '18px',
+        display: 'block',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+      }}
+    />
+  </IonRouterLink>
+)}
+			
 				</>
 				
               )}
@@ -310,11 +314,11 @@ export default function HomePage() {
 			<IonAlert
   isOpen={showAlert}
   onDidDismiss={() => setShowAlert(false)}
-  header="Bienvenido"
-  message="¡Felicidades! Has ganado tus primeros 10 puntos por completar tu registro. Empieza a sumar puntos completando tareas y fortaleciendo nuestra red de simpatizantes."
+  header="Bienvenid@"
+  message="¡Felicidades! Ganaste 10 puntos por completar tu registro. Consigue más puntos completando actividades."
   buttons={[
     {
-      text: '¡VAMOS A GANAR!',
+      text: 'ACEPTAR',
       role: 'confirm',
       cssClass: 'alert-button-confirm',
       handler: () => {

@@ -33,9 +33,7 @@ const ImgModal = ({ isOpen, onClose, imageSrc, targetRoute = "#" }) => {
           justify-content: center;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.4);
-          backdrop-filter: blur(4px);
-          -webkit-backdrop-filter: blur(4px);
+
         }
 
         /* Contenedor de la imagen y cierre */

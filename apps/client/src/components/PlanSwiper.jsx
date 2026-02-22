@@ -90,7 +90,12 @@ const PlanSwiper = () => {
                 routerDirection="forward"
                 style={{ display: 'block', textDecoration: 'none' }}
               >
-                <div style={{ position: 'relative', height: '140px' }}>
+                <div style={{ 
+				  position: 'relative', 
+				  width: '100%', 
+                  aspectRatio: '16 / 7',
+                  minHeight: '140px'
+                }}>
                   <img
                     src={plan.url_image_swiper}
                     alt={plan.title}

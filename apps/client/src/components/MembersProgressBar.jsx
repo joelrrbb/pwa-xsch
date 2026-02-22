@@ -66,13 +66,13 @@ const MembersProgressBar = () => {
   const totalPercentage = Math.min(count / dynamicTarget, 0.99);
 
   return (
-    <div className="relative overflow-hidden p-6 bg-gradient-to-br from-slate-950 via-black to-slate-900 rounded-[2.5rem] border border-green-500/20 shadow-2xl font-sans">
+    <div className="relative overflow-hidden p-5 bg-gradient-to-br from-slate-950 via-black to-slate-900 rounded-[2.5rem] border border-green-500/20 shadow-2xl font-sans">
       
       {/* NOTIFICACIÓN TIPO ISLA */}
       <div className={`absolute top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 transform ${
         showToast ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
       }`}>
-        <div className="min-w-[150px] justify-center bg-green-500 text-black text-[9px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] uppercase flex items-center gap-2">
+        <div className="min-w-[175px] justify-center bg-green-500 text-black text-[9px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] uppercase flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-black rounded-full animate-ping" />
           Nuevo miembro añadido
         </div>

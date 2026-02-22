@@ -27,13 +27,14 @@ const GET_USER_CONFIG = (user) => {
 };
 
 const ReferidosPage = () => {
+
   const [currentUser] = useState(() => {
     const saved = localStorage.getItem('user_session');
     return saved
       ? JSON.parse(saved)
       : { id: 'dcbc31f9-14e5-4757-8acf-7f5e11f7f797', phone: '700000', tier: 1, member_type: 1 };
   });
-
+  
   const [referidosDB, setReferidosDB] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false); // Estado para el modal de fecha
@@ -43,6 +44,7 @@ const ReferidosPage = () => {
   const [showToast, setShowToast] = useState({ show: false, msg: '', color: 'success' });
   const [formData, setFormData] = useState({ name: '', phone: '', ci: '', fechaNac: '' });
   const generateAccessCode = () => Math.floor(100000 + Math.random() * 900000).toString();
+  const [countdown, setCountdown] = useState({ active: true, display: "" });
 
   const slotsConfig = GET_USER_CONFIG(currentUser);
 
@@ -58,7 +60,45 @@ const ReferidosPage = () => {
       setFetching(false);
     }
   }, [currentUser.id]);
+  
+  
+  
+ useEffect(() => {
+  // Solo ejecutar si existe la fecha Y el usuario es tipo 1
+  if (!currentUser?.created_at || currentUser?.member_type !== 1) return;
 
+  const baseDate = new Date(currentUser.created_at.replace(" ", "T"));
+  const targetDate = new Date(baseDate);
+  targetDate.setDate(baseDate.getDate() + 3);
+
+  const updateTimer = () => {
+    const ahora = new Date();
+    const diff = targetDate.getTime() - ahora.getTime();
+
+    if (diff <= 0) {
+      setCountdown({ active: false, display: "Tiempo agotado" });
+      return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+    const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+    setCountdown({ 
+      active: true, 
+      display: `${d} días ${h}:${m}:${s}` 
+    });
+  };
+
+  const timerId = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  return () => clearInterval(timerId);
+}, [currentUser]);
+  
+  
+  
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -153,7 +193,7 @@ const ReferidosPage = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
@@ -167,15 +207,14 @@ const ReferidosPage = () => {
       </IonHeader>
 
       <IonContent className="ion-padding bg-slate-50">
+	 
 	  
-	  
-	  
-       <div className="p-6 bg-white rounded-[2.5rem] shadow-[0_15px_40px_rgba(34,197,94,0.08)] border border-green-50">
-		<div className="mb-4">
+       <div className="p-3 bg-white rounded-[2.5rem] shadow-[0_15px_40px_rgba(34,197,94,0.08)] border border-green-50">
+		<div className="mb-4 px-3">
 			<IonText className="text-[11px] uppercase font-black text-slate-400 tracking-[0.15em] block mb-1">
 			Crecimiento de Equipo
 			</IonText>
-			<h2 className="ys-text-sm">
+			<h2 className="ys-text-sm" >
 			Comunidad <span className="text-green-500">Activa</span>
 			</h2>
 			</div>
@@ -186,10 +225,60 @@ const ReferidosPage = () => {
 		</div>
 		
 		<div className="flex items-center gap-3 px-6">
-			<h2 className="ys-text-sm">
-			Compañeros de equipo
-			</h2>
+			<h2 className="ys-text-sm">Compañeros de equipo</h2>	
 		</div>
+		
+		
+		
+		
+		{/* SECCIÓN DEL COUNTDOWN - SOLO PARA MEMBER_TYPE 1 */}
+{currentUser?.member_type === 1 && (
+  <div className="px-3 mt-2 mb-6">
+    {countdown.active ? (
+      /* ESTADO: ACTIVO (INCENTIVO DE PUNTOS) */
+      <div className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between" 
+           style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}>
+        
+        <div className="pl-5 flex flex-col justify-center">
+          
+          <span className="text-white text-base leading-tight">
+            Gana <span className="text-yellow-300">100 puntos</span> <br/>
+            invitando a 2 amigos
+          </span>
+        </div>
+
+        <div className="pr-5 flex flex-col items-end justify-center">
+          <div className="flex items-center gap-1 text-white/90 text-[10px] font-bold mb-1 uppercase tracking-tighter">
+            <IonIcon icon={timeOutline} />
+            <span>Expira en</span>
+          </div>
+          <div className="text-white font-mono text-base font-black leading-none tracking-tighter">
+            {countdown.display}
+          </div>
+        </div>
+        
+        <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+      </div>
+    ) : (
+      /* ESTADO: EXPIRADO (AÚN PUEDE INSCRIBIR) */
+      <div className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between" 
+           style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}>
+        
+        <div className="pl-5 flex flex-col justify-center">
+          <span className="text-white text-[10px] uppercase font-black tracking-[0.15em] opacity-80">
+            El próximo puedes ser tú
+          </span>
+          <span className="text-white text-base leading-tight">
+            ¡Estás a tiempo de cambiar tu futuro!
+          </span>
+        </div>
+
+        <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+      </div>
+    )}
+  </div>
+)}
+
 		
        <div className="px-3 mt-4"> {/* Contenedor con margen lateral para que no toque los bordes */}
   <IonGrid className="ion-no-padding">

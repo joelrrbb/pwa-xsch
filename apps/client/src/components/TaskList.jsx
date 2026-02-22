@@ -129,7 +129,7 @@ const TaskList = ({ userId }) => {
         fontSize: '1.1rem',
         fontWeight: '700' 
       }}>
-        ✅ ¡Todo listo por ahora!
+       ¡Todo listo por ahora!
       </h2>
       
       <p style={{ 

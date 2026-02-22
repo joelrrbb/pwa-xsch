@@ -61,14 +61,15 @@ export default function LandingPage() {
           backgroundColor: '#fff',
           backgroundImage: landingImg ? `url(${landingImg})` : 'none',
           backgroundSize: 'cover', 
-          backgroundPosition: 'center', 
+          backgroundPosition: 'center center',
+		  backgroundRepeat: 'no-repeat',
           position: 'relative',
           opacity: loading ? 0 : 1, 
           transition: 'opacity 0.3s ease-in'
         }}>
           
           {/* ESPACIADOR SUPERIOR: Este empuja el botón hacia abajo */}
-          <div style={{ flex: 3 }} /> 
+          <div style={{ flex: 4 }} /> 
 
           {/* EL BOTÓN (DISEÑO EPIC GAMES) */}
           {!loading && (
@@ -81,6 +82,10 @@ export default function LandingPage() {
             }}>
               <button 
                 onClick={() => pwaInstallRef.current?.showDialog()}
+				onMouseDown={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+				onMouseUp={(e) => e.currentTarget.style.transform = 'translateY(0px)'}
+				onTouchStart={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+				onTouchEnd={(e) => e.currentTarget.style.transform = 'translateY(0px)'}
                 style={{
                   width: '100%',
                   backgroundColor: '#f7ff19',
@@ -91,6 +96,7 @@ export default function LandingPage() {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   padding: '1rem 0.8rem 1rem 1.3rem',
+				  transition: 'transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1)',
                   cursor: 'pointer',
                 }}
               >
@@ -157,8 +163,8 @@ export default function LandingPage() {
 			  
 			  
 			  <div style={{
-        marginTop: '20px', // Espacio exacto entre botón y texto
-        color: '#000',
+        marginTop: '10px', // Espacio exacto entre botón y texto
+        color: '#fff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
