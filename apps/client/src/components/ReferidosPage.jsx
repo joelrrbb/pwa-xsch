@@ -407,8 +407,8 @@ const ReferidosPage = () => {
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
-          initialBreakpoint={0.365}
-          breakpoints={[0, 0.365, 0.6]}
+          initialBreakpoint={0.355}
+          breakpoints={[0, 0.355, 0.6]}
         >
           <IonHeader className="ion-no-border">
             <IonToolbar>
