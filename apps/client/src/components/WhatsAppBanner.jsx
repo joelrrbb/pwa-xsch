@@ -70,7 +70,9 @@ const WhatsAppBanner = () => {
       <IonButton 
         size="small"
 		color="success"
-        style={{ 
+		shape="round"
+        style={{
+		  '--ion-color-contrast': '#ffffff',
           '--color': '#fff',         
           fontWeight: 'bold',
         }}
