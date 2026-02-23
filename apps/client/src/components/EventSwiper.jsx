@@ -60,7 +60,7 @@ const EventSwiper = () => {
           style={{ width: '40px', height: '40px' }}
         />
         <div>
-          <div className="ys-text">Actividades</div>
+          <div className="ys-text">Eventos</div>
           <div style={{ fontSize: '0.9rem', color: '#555' }}>Próximos eventos y reuniones</div>
         </div>
       </div>

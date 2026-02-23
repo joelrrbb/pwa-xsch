@@ -143,7 +143,7 @@ export default function HomePage() {
             <div style={{ padding: '20px' }}>
 			
 			<IonImg 
-				src="/xsch-home2.svg" 
+				src="/xsch-home3.svg" 
 				style={{ 
 					width: '100%', 
 					objectFit: 'contain' // Mantiene la proporción sin deformar
