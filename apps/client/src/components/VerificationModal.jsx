@@ -236,8 +236,8 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
-          initialBreakpoint={0.355}
-          breakpoints={[0, 0.355, 0.6]}
+          initialBreakpoint={0.345}
+          breakpoints={[0, 0.345, 0.6]}
         >
           <IonHeader>
             <IonToolbar>
