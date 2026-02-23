@@ -37,7 +37,7 @@ const PlanSwiper = () => {
   if (!loading && !planes.length) return null;
 
   return (
-    <div style={{ marginBottom: '28px', marginTop: '18px' }}>
+    <div style={{ marginBottom: '28px', marginTop: '25px' }}>
       {/* Encabezado del Swiper: SIEMPRE VISIBLE */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '22px', paddingLeft: '5px' }}>
         <img src="/xsch-1.svg" alt="Logo" style={{ width: '36px', height: '36px' }} />
