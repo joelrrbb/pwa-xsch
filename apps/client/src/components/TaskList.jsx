@@ -147,30 +147,31 @@ const TaskList = ({ userId }) => {
     const remainingText = getTimeRemainingText(task.deadline);
     return (
       <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '12px' }}>
-        <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px' }}>
+        <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px', alignItems: 'center' }}>
               
               <div style={{ width: '50px', height: '50px', flexShrink: 0 }}>
-                <IonImg src={task.thumbnail} style={{ borderRadius: '8px', objectFit: 'cover', height: '100%' }} />
+                <IonImg src={task.thumbnail} style={{ borderRadius: '6px', objectFit: 'cover', height: '100%' }} />
               </div>
 
               <div style={{ flexGrow: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <h2 className="ys-text" style={{ margin: '0', color: '#000', flex: 1 }}>{task.caption}</h2>
-                  <IonBadge style={{ marginLeft: '10px', padding:'5px', background:'#48dd55' }}>
+                  <IonBadge color="success" style={{ padding: '5px 0.8em', borderRadius: '6px' }}>
                     +{task.points || 0} puntos
                   </IonBadge>
                 </div>
-                
                 <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#444' }}>{task.description}</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '10px' }}>
                   <IonButton 
-                    size="small" 
+                    size="small"
+					color="warning"
+					className="btn-pulse"
                     onClick={() => startTask(task)}
                     disabled={remainingText === "Expirado"}
                     style={{ '--border-radius': '6px', margin: 0 }}
                   >
-                    Realizar tarea
+                    Realizar actividad
                   </IonButton>
 
                   {remainingText && (

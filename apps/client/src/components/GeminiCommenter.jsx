@@ -7,7 +7,8 @@ import {
   IonCard,
   IonCardContent,
   IonBadge,
-  IonRouterLink
+  IonRouterLink,
+  IonText
 } from '@ionic/react';
 import { 
   sparkles, 
@@ -87,8 +88,9 @@ const GeminiCommenter = () => {
   };
 
   return (
+  
     <div style={{ padding: '0 4px' }}>
-	
+	<IonText color="dark"><h2 className="ys-text">Comentarios</h2></IonText>
 	<style>{ANIMATION_STYLES}</style>
 	
       <IonCard style={styles.mainCard}>

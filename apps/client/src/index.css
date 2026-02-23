@@ -168,3 +168,13 @@ ion-input-otp.custom {
   --ion-color-contrast: #ffffff !important;
   --ion-color-contrast-rgb: 255, 255, 255 !important;
 }
+
+@keyframes pulse-animation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.btn-pulse {
+  animation: pulse-animation 2s infinite ease-in-out;
+}

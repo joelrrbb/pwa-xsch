@@ -53,7 +53,7 @@ const WhatsAppBanner = () => {
 		
 		<div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
   <IonText style={{ fontSize: '0.85rem', color: '#4b4b4b' }}>
-    Envía tus capturas al 
+    Envía tus capturas al número
 	</IonText>
   <IonText style={{ 
     fontSize: '18px',   // Tamaño destacado

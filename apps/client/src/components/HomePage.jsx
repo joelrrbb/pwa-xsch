@@ -143,9 +143,9 @@ export default function HomePage() {
             <div style={{ padding: '20px' }}>
 			
 			<IonImg 
-				src="/xsch-home.svg" 
+				src="/xsch-home2.svg" 
 				style={{ 
-					width: '185px', 
+					width: '100%', 
 					objectFit: 'contain' // Mantiene la proporción sin deformar
 						}} 
 			/>
@@ -235,7 +235,7 @@ export default function HomePage() {
           style={{ flex: 1 }}
         >
           <img
-            src="https://res.cloudinary.com/dljymqntm/image/upload/v1770272578/b2_kv2uvm.webp"
+            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771861945/b2_kv2uvm_1_vsll81.webp"
             alt="Donar"
             style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
           />
@@ -259,6 +259,7 @@ export default function HomePage() {
 					<GeminiCommenter userId={session.id} />
 					
 				{/* Banner Condicional: Descargas para Voluntarios (1), Tienda para el resto (>=2) */}
+				<IonText color="dark"><h2 className="ys-text" style={{ marginLeft: '8px' }}>Material adicional</h2></IonText>
 {Number(session.member_type) === 1 ? (
   <IonRouterLink
     routerLink="/downloads"
@@ -328,7 +329,7 @@ export default function HomePage() {
   ]}
 ></IonAlert>
 
-			<div className="mt-8 px-4">
+			<div className="mt-4 px-4">
 </div>
 			
 			
