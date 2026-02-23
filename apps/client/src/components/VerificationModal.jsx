@@ -153,7 +153,7 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
                 </button>
               </div>
 
-              <div style={{ margin: '20px 0 10px 20px', textAlign: 'left' }}>
+              <div style={{ margin: '50px 0 10px 20px', textAlign: 'left' }}>
                 <IonText color="medium">
                   Redes Sociales (Opcional)
                 </IonText>
@@ -236,8 +236,8 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
-          initialBreakpoint={0.335}
-          breakpoints={[0, 0.335, 0.6]}
+          initialBreakpoint={0.315}
+          breakpoints={[0, 0.315, 0.6]}
         >
           <IonHeader>
             <IonToolbar>
