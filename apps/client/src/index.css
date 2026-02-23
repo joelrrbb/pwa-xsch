@@ -161,3 +161,10 @@ ion-alert {
 ion-input-otp.custom {
   --border-width: 1px;
 }
+
+.clase-boton-success {
+--background: #2dd36f !important;
+  --color: #ffffff !important;
+  --ion-color-contrast: #ffffff !important;
+  --ion-color-contrast-rgb: 255, 255, 255 !important;
+}

@@ -53,7 +53,7 @@ const WhatsAppBanner = () => {
 		
 		<div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
   <IonText style={{ fontSize: '0.85rem', color: '#4b4b4b' }}>
-    Envía tus capturas al número
+    Envía tus capturas al 
 	</IonText>
   <IonText style={{ 
     fontSize: '18px',   // Tamaño destacado
@@ -70,15 +70,13 @@ const WhatsAppBanner = () => {
       <IonButton 
         size="small"
 		color="success"
-		shape="round"
-        style={{
-		  '--ion-color-contrast': '#ffffff',
-          '--color': '#fff',         
+		className="clase-boton-success"
+        style={{   
           fontWeight: 'bold',
         }}
         onClick={handleSendClick}
       >
-        ENVIAR
+        Enviar
       </IonButton>
     </div>
   );
