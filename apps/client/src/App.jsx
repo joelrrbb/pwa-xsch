@@ -27,9 +27,22 @@ let isOneSignalInitialized = false;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isPWA, setIsPWA] = useState(false);
 
   useEffect(() => {
-    // 1. Inicializar OneSignal (Solo intentará en navegadores compatibles)
+    // 1. Detección robusta de PWA
+    const checkPWA = () => {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                           || window.navigator.standalone 
+                           || document.referrer.includes('android-app://');
+      
+      // En desarrollo puedes forzar true para probar: setIsPWA(true);
+      setIsPWA(!!isStandalone);
+    };
+
+    checkPWA();
+
+    // 2. Inicializar OneSignal
     const initOneSignal = async () => {
       if (isOneSignalInitialized) return;
       try {
@@ -39,27 +52,38 @@ function App() {
         });
         isOneSignalInitialized = true;
       } catch (e) {
-        console.warn("OneSignal no disponible o ya inicializado");
+        console.warn("OneSignal no disponible");
       }
     };
 
     initOneSignal();
 
-    // 2. Verificar Sesión
+    // 3. Verificar Sesión
     const session = localStorage.getItem('user_session');
     setIsAuthenticated(!!session);
   }, []);
 
+  // Evitar parpadeos mientras carga el estado inicial
   if (isAuthenticated === null) return null;
 
+  // --- ESCENARIO 1: NAVEGADOR (No Instalada) ---
+  // Si no es PWA, solo devolvemos la Landing Page sin Router
+  if (!isPWA) {
+    return (
+      <IonApp>
+        <LandingPage />
+      </IonApp>
+    );
+  }
+
+  // --- ESCENARIO 2: PWA (App Instalada) ---
+  // Aquí vive toda la lógica de navegación y rutas protegidas
   return (
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-          {/* Ruta para la Landing Page (Accesible para todos en /welcome) */}
-          <Route exact path="/welcome" component={LandingPage} />
-
-          {/* Login: Si ya está autenticado, va al home */}
+          
+          {/* Login: Si ya está logueado dentro de la PWA, va al home */}
           <Route exact path="/login">
             {isAuthenticated ? <Redirect to="/home" /> : <LoginPage onLogin={() => setIsAuthenticated(true)} />}
           </Route>
@@ -84,22 +108,21 @@ function App() {
           <Route exact path="/shop">
             {!isAuthenticated ? <Redirect to="/login" /> : <ShopPage />}
           </Route>
-		  
-		  {/* Ruta de Soporte / Aporte Voluntario */}
-		  <Route exact path="/support">
-			{!isAuthenticated ? <Redirect to="/login" /> : <SupportPage />}
-		  </Route>
 
-          {/* Redirección inicial: 
-              Si no está logueado, lo enviamos al login (o a /welcome si prefieres) */}
+          <Route exact path="/support">
+            {!isAuthenticated ? <Redirect to="/login" /> : <SupportPage />}
+          </Route>
+
+          <Route exact path="/propuesta/:id" component={PropuestaDetalle} />
+
+          {/* Redirección inicial dentro de la PWA */}
           <Route exact path="/">
             <Redirect to={isAuthenticated ? "/home" : "/login"} />
           </Route>
-		  
-		  <Route exact path="/propuesta/:id" component={PropuestaDetalle} />
 
           {/* Fallback */}
           <Route render={() => <Redirect to="/" />} />
+          
         </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
