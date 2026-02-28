@@ -146,7 +146,7 @@ const TaskList = ({ userId }) => {
   tasks.map(task => {
     const remainingText = getTimeRemainingText(task.deadline);
     return (
-      <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '12px' }}>
+      <IonCard key={task.id} style={{ margin: '12px 0', borderRadius: '20px' }}>
         <IonCardContent style={{ display: 'flex', padding: '12px', gap: '12px', alignItems: 'center' }}>
               
               <div style={{ width: '50px', height: '50px', flexShrink: 0 }}>

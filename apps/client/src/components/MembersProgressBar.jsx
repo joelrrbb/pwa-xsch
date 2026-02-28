@@ -72,9 +72,9 @@ const MembersProgressBar = () => {
       <div className={`absolute top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 transform ${
         showToast ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
       }`}>
-        <div className="min-w-[175px] justify-center bg-green-500 text-black text-[9px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] uppercase flex items-center gap-2">
+        <div className="min-w-[195px] justify-center bg-green-500 text-black text-[9px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(34,197,94,0.4)] uppercase flex items-center gap-2">
           <div className="w-1.5 h-1.5 bg-black rounded-full animate-ping" />
-          Nuevo miembro añadido
+          Nuevo voluntario añadido
         </div>
       </div>
 

@@ -291,7 +291,7 @@ const ReferidosPage = () => {
         const isPending = data && data.is_verified < 2;
 
         // Lógica de estilos
-        let cardStyle = "bg-gray-50 border-gray-100 text-gray-400";
+        let cardStyle = "bg-gray-50 border-gray-300 text-gray-400";
         let icon = personAddOutline;
         let badgeColor = "bg-gray-400";
         
@@ -333,7 +333,7 @@ const ReferidosPage = () => {
                 {isRejected ? 'Rechazado' : 
                  isConfirmed ? (data?.name?.split(' ')[0] || 'OK') : 
                  isPending ? 'Espera' : 
-                 (isVoluntario ? 'Volunt.' : 'Invitado')}
+                 (isVoluntario ? 'Voluntario' : 'Invitado')}
               </span>
             </div>
           </IonCol>
@@ -437,8 +437,12 @@ const ReferidosPage = () => {
           duration={2000}
           onDidDismiss={() => setShowToast({ ...showToast, show: false })}
         />
+		
+
       </IonContent>
     </IonPage>
+	
+	
   );
 };
 

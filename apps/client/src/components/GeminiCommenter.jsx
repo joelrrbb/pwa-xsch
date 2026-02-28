@@ -104,7 +104,7 @@ const GeminiCommenter = () => {
               </div>
               <div style={{ marginLeft: '12px' }}>
                 <h3 style={styles.title}>Asistente Digital</h3>
-                <span style={styles.subtitle}>IA ESTRATÉGICA XS-CH</span>
+                <span style={styles.subtitle}>IA XS-CH</span>
               </div>
             </div>
 			
