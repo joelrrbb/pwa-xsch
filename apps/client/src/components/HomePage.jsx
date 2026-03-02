@@ -140,7 +140,7 @@ export default function HomePage() {
 
         {!loading && session && (
           <>
-            <div style={{ padding: '20px' }}>
+            <div style={{ padding: '15px' }}>
 			
 			<IonImg 
 				src="/xsch-home3.svg" 
