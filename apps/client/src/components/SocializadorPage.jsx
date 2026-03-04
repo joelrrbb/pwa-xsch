@@ -2,15 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton,
   IonButtons, IonGrid, IonRow, IonCol, IonIcon, IonModal, IonItem,
-  IonLabel, IonInput, IonButton, IonToast, IonSpinner, IonText
+  IonLabel, IonInput, IonButton, IonToast, IonSpinner
 } from '@ionic/react';
 import { 
   personAddOutline, 
   checkmarkCircle, 
   timeOutline, 
   closeCircleOutline, 
-  rocketOutline,
-  megaphoneOutline 
+  rocketOutline 
 } from 'ionicons/icons';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -32,15 +31,12 @@ const SocializadorPage = () => {
 
   const generateAccessCode = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-  // CARGAR DATOS FILTRADOS
   const loadVoluntarios = useCallback(async () => {
     setFetching(true);
     try {
       const res = await fetch(`${API_BASE_URL}/get-referidos?referrer_id=${currentUser.id}`);
       const result = await res.json();
-      
       if (result.code === 0) {
-        // DIFERENCIACIÓN: Solo cargamos los que NO están en la cuadrícula de Referidos (ID > 5)
         const soloSocializadoresExtra = result.data.filter(item => 
           item.member_type === 1 && item.id_slot > 5
         );
@@ -57,29 +53,18 @@ const SocializadorPage = () => {
     loadVoluntarios();
   }, [loadVoluntarios]);
 
-  // GUARDAR NUEVO VOLUNTARIO (ID_SLOT DINÁMICO > 5)
   const handleSave = async () => {
     if (!formData.name || !formData.phone) {
       setShowToast({ show: true, msg: 'Completa los campos', color: 'warning' });
       return;
     }
-
-    const phoneRegex = /^[67]\d{7}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      setShowToast({ show: true, msg: 'Celular inválido', color: 'warning' });
-      return;
-    }
-
     setLoading(true);
     const accessCode = generateAccessCode();
-    
-    // El nuevo id_slot será el total de extras + 6 (para no pisar los 5 iniciales)
     const nuevoIdSlot = voluntarios.length + 6;
 
     const payload = {
       name: formData.name,
       phone: formData.phone,
-      identity_card: `SOC-${Date.now()}`,
       member_type: 1, 
       tier: (currentUser.tier || 1) + 1,
       is_verified: 0,
@@ -95,12 +80,10 @@ const SocializadorPage = () => {
         body: JSON.stringify(payload)
       });
       const result = await response.json();
-
       if (result.code === 0) {
         setShowToast({ show: true, msg: '¡Invitación enviada!', color: 'success' });
         setShowModal(false);
         loadVoluntarios();
-
         const mensaje = `¡Hola! 👋 Únete a mi equipo de socializadores.\nActiva tu cuenta aquí: https://pwa-xsch-client.vercel.app/\nTu código: *${accessCode}*`;
         window.location.assign(`https://wa.me/591${formData.phone}?text=${encodeURIComponent(mensaje)}`);
       } else {
@@ -125,7 +108,8 @@ const SocializadorPage = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding bg-slate-50">
+      {/* APLICAMOS PADDING GLOBAL DE 15PX AQUÍ */}
+      <IonContent style={{ '--padding-start': '15px', '--padding-end': '15px', '--padding-top': '15px' }}>
         
         {/* Banner Superior */}
         <div className="p-6 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2.5rem] shadow-xl mb-6 text-white relative overflow-hidden">
@@ -139,15 +123,15 @@ const SocializadorPage = () => {
             <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
         </div>
 
-        <div className="px-2 mb-4">
+        <div className="px-1 mb-4">
             <h2 className="ys-text-sm">Mis Socializadores Extra</h2>
         </div>
 
+        {/* IonGrid sin padding interno para respetar los 15px del contenedor */}
         <IonGrid className="ion-no-padding">
           <IonRow>
-            {/* Lista dinámica de voluntarios extra */}
             {voluntarios.map((vol, i) => (
-              <IonCol size="3" key={vol.id || i} className="p-[5px]">
+              <IonCol size="3" key={vol.id || i} className="p-[4px]">
                 <div className={`relative flex flex-col items-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] shadow-sm 
                   ${vol.is_verified >= 2 ? 'bg-green-50 border-green-200 text-green-600' : 'bg-white border-indigo-100 text-indigo-400'}`}>
                   
@@ -167,11 +151,10 @@ const SocializadorPage = () => {
               </IonCol>
             ))}
 
-            {/* Botón Añadir */}
-            <IonCol size="3" className="p-[5px]">
+            <IonCol size="3" className="p-[4px]">
               <div
                 onClick={() => { setFormData({ name: '', phone: '' }); setShowModal(true); }}
-                className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-90 transition-all"
+                className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-95 transition-all"
                 style={{ minHeight: '75px' }}
               >
                 <IonIcon icon={personAddOutline} className="text-2xl mb-1" />
@@ -181,51 +164,25 @@ const SocializadorPage = () => {
           </IonRow>
         </IonGrid>
 
-        {/* Modal de Registro */}
-        <IonModal
-          isOpen={showModal}
-          onDidDismiss={() => setShowModal(false)}
-          initialBreakpoint={0.6}
-          breakpoints={[0, 0.6, 0.8]}
-        >
+        {/* Modales */}
+        <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)} initialBreakpoint={0.55} breakpoints={[0, 0.55]}>
           <div className="ion-padding pt-8">
             <div className="text-center mb-6">
                 <h2 className="text-xl font-bold ys-text">Invitar Socio</h2>
-                <p className="text-xs text-slate-500">Agrega un voluntario tipo 1 fuera de tus slots principales</p>
+                <p className="text-xs text-slate-500">Agrega un voluntario fuera de tus slots principales</p>
             </div>
-
             <div className="space-y-4 px-2">
               <IonItem fill="outline" className="rounded-2xl">
                 <IonLabel position="stacked">Nombre</IonLabel>
-                <IonInput 
-                    style={{ fontSize: '18px', fontWeight: '600' }} 
-                    value={formData.name} 
-                    onIonInput={e => setFormData({ ...formData, name: e.detail.value })} 
-                />
+                <IonInput value={formData.name} onIonInput={e => setFormData({ ...formData, name: e.detail.value })} />
               </IonItem>
-
               <IonItem fill="outline" className="rounded-2xl">
                 <IonLabel position="stacked">WhatsApp</IonLabel>
-                <IonInput 
-                    type="tel" 
-                    maxlength={8} 
-                    style={{ fontSize: '18px', fontWeight: '600' }} 
-                    value={formData.phone} 
-                    onIonInput={e => setFormData({ ...formData, phone: e.detail.value })} 
-                />
+                <IonInput type="tel" maxlength={8} value={formData.phone} onIonInput={e => setFormData({ ...formData, phone: e.detail.value })} />
               </IonItem>
-
-              <div className="pt-4">
-                <IonButton
-                    expand="block"
-                    className="font-bold h-12"
-                    style={{ '--border-radius': '14px', '--background': '#4f46e5' }}
-                    onClick={handleSave}
-                    disabled={loading}
-                >
-                    {loading ? <IonSpinner name="crescent" /> : 'Confirmar e Invitar'}
-                </IonButton>
-              </div>
+              <IonButton expand="block" className="font-bold h-12" style={{ '--border-radius': '14px', '--background': '#4f46e5' }} onClick={handleSave} disabled={loading}>
+                {loading ? <IonSpinner name="crescent" /> : 'Confirmar e Invitar'}
+              </IonButton>
             </div>
           </div>
         </IonModal>
@@ -237,7 +194,6 @@ const SocializadorPage = () => {
           duration={2500}
           onDidDismiss={() => setShowToast({ ...showToast, show: false })}
         />
-
       </IonContent>
     </IonPage>
   );
