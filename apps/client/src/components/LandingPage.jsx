@@ -47,7 +47,7 @@ export default function LandingPage() {
         {/* CARGA INICIAL */}
         {loading && (
           <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-            <IonSpinner name="crescent" color="primary" />
+            <IonSpinner name="crescent" color="dark" />
           </div>
         )}
 

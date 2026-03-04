@@ -14,6 +14,7 @@ import DownloadsPage from './components/DownloadsPage';
 import ShopPage from './components/ShopPage';
 import SupportPage from './components/SupportPage';
 import PropuestaDetalle from './components/PropuestaDetalle';
+import SocializadorPage from './components/SocializadorPage';
 
 /* CSS de Ionic */
 import '@ionic/react/css/core.css';
@@ -83,6 +84,10 @@ function App() {
 
           <Route exact path="/shop">
             {!isAuthenticated ? <Redirect to="/login" /> : <ShopPage />}
+          </Route>
+		  
+		  <Route exact path="/socializador">
+            {!isAuthenticated ? <Redirect to="/login" /> : <SocializadorPage />}
           </Route>
 		  
 		  {/* Ruta de Soporte / Aporte Voluntario */}

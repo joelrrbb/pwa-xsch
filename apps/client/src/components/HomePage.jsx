@@ -218,7 +218,7 @@ export default function HomePage() {
   {/* Imagen 2: Donación */}
 {Number(session.member_type) === 1 ? (
         <IonRouterLink
-          routerLink="/support"
+          routerLink="/socializador"
           routerDirection="forward"
           style={{ flex: 1 }}
         >

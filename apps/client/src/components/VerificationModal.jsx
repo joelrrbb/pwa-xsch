@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { 
   IonModal, IonContent, IonButton, IonHeader, IonToolbar, IonTitle,
   IonItem, IonLabel, IonInput, IonList, IonSpinner, IonText, IonIcon,
-  IonDatetime, IonButtons
+  IonDatetime, IonButtons, useIonToast 
 } from '@ionic/react';
-import { timeOutline, alertCircleOutline, calendarOutline, logoFacebook, logoTiktok } from 'ionicons/icons';
+import { timeOutline, alertCircleOutline, calendarOutline, logoTiktok } from 'ionicons/icons';
 import { supabase } from '../supabaseClient';
 
 const VerificationModal = ({ isOpen, onVerified, memberId }) => {
+  const [present] = useIonToast(); // Hook para las notificaciones
   const [carnet, setCarnet] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [fechaTexto, setFechaTexto] = useState('Seleccionar');
@@ -15,7 +16,6 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
   const [linkTk, setLinkTk] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [status, setStatus] = useState(0);
 
   useEffect(() => {
@@ -43,60 +43,69 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
     fetchMember();
   }, [memberId, isOpen]);
 
+  // Función para mostrar la notificación (Toast)
+  const mostrarAviso = (mensaje, color = 'danger') => {
+    present({
+      message: mensaje,
+      duration: 2500,
+      position: 'top',
+      color: color,
+    });
+  };
+
   const handleDateChange = (e) => {
     const value = e.detail.value;
     if (value) {
       const dateOnly = value.split('T')[0];
       setFechaNacimiento(dateOnly);
-      setFechaTexto(new Date(value).toLocaleDateString('es-ES'));
+      setFechaTexto(new Date(value + "T00:00:00").toLocaleDateString('es-ES'));
     }
   };
 
   const handleGuardar = async () => {
-  // 1. Log para ver qué ID recibe el componente desde las props
-  console.log("DEBUG: ID recibido en el Modal:", memberId);
+    if (!memberId) {
+      mostrarAviso('Sesión no válida.');
+      return;
+    }
 
-  if (!memberId) {
-    console.error("DEBUG: No se puede guardar porque memberId es null o undefined");
-    setError('Sesión no válida.');
-    return;
-  }
+    // --- VALIDACIONES CON TOAST ---
+    if (!carnet.trim()) {
+      mostrarAviso('Por favor ingresa tu número de carnet.', 'warning');
+      return;
+    }
 
-  setLoading(true);
-  setError('');
+    if (!fechaNacimiento) {
+      mostrarAviso('Debes seleccionar tu fecha de nacimiento.', 'warning');
+      return;
+    }
 
-  const updateData = {
-    id: memberId, 
-    identity_card: carnet,
-    birth_date: fechaNacimiento,
-    facebook_link: linkFb || null,
-    tiktok_link: linkTk || null,
-    is_verified: 1
+    setLoading(true);
+
+    const updateData = {
+      id: memberId, 
+      identity_card: carnet.trim(),
+      birth_date: fechaNacimiento,
+      facebook_link: linkFb || null,
+      tiktok_link: linkTk || null,
+      is_verified: 1
+    };
+
+    const { error: updateError } = await supabase
+      .from('members')
+      .upsert(updateData, { onConflict: 'id' });
+
+    if (updateError) {
+      mostrarAviso('Error al guardar: ' + updateError.message);
+    } else {
+      mostrarAviso('¡Datos enviados con éxito!', 'success');
+      setStatus(1);
+      onVerified(1);
+    }
+    setLoading(false);
   };
-
-  // 2. Log para ver el objeto completo antes de enviarlo a Supabase
-  console.log("DEBUG: Datos que se enviarán a Supabase (upsert):", updateData);
-
-  const { data, error: updateError } = await supabase
-    .from('members')
-    .upsert(updateData, { onConflict: 'id' })
-    .select(); // Agregamos select para ver qué responde la DB
-
-  if (updateError) {
-    console.error('DEBUG: Error de Supabase:', updateError);
-    setError('Error al guardar: ' + updateError.message);
-  } else {
-    // 3. Log para ver qué devolvió la base de datos tras la operación
-    console.log("DEBUG: Respuesta exitosa de Supabase:", data);
-    setStatus(1);
-    onVerified(1);
-  }
-  setLoading(false);
-};
 
   return (
     <IonModal isOpen={isOpen} backdropDismiss={false}>
-      
       <IonContent className="ion-padding ion-text-center">
 
         {(status === 0 || status === 3) && (
@@ -108,7 +117,6 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
                   style={{ fontSize: '54px', color: 'red', marginBottom: '10px' }}
                 />
               )}
-
               <h2 className="ys-text">
                 {status === 3 ? 'Verificación Rechazada' : 'Hola, falta un paso'}
               </h2>
@@ -116,17 +124,30 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
             </div>
 
             <IonList lines="none">
-
               {/* CARNET */}
               <IonItem style={styles.itemInput}>
                 <div style={{ width: '100%', padding: '8px 0' }}>
-                  <IonText>
-                    Carnet de Identidad (C.I.)
-                  </IonText>
+                  <IonText color="medium">Carnet de Identidad (C.I.)</IonText>
                   <IonInput
                     type="text"
+					clearInput={true}
                     value={carnet}
+					enterkeyhint="done" 
                     onIonInput={(e) => setCarnet(e.detail.value)}
+					onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          // Bloqueo total del salto
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Forzar el cierre del teclado quitando el foco
+          const el = e.target;
+          if (el) el.blur();
+
+          // Abrir la fecha
+          setShowDatePicker(true);
+        }
+      }}
                     style={{ borderBottom: '1px solid #d1d1d6', fontSize: '26px', fontWeight: '600'}}
                   />
                 </div>
@@ -135,61 +156,27 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
               {/* FECHA */}
               <div style={styles.sidePaddingContainer}>
                 <button
+                  type="button"
                   onClick={() => setShowDatePicker(true)}
                   style={styles.dateButton}
                 >
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <IonIcon
-                      icon={calendarOutline}
-                      style={{ marginRight: '8px', color: '#666' }}
-                    />
-                    <span style={{ color: '#666' }}>
-                      Fecha de Nacimiento:
-                    </span>
+                    <IonIcon icon={calendarOutline} style={{ marginRight: '8px', color: '#666' }} />
+                    <span style={{ color: '#666' }}>Fecha de Nacimiento:</span>
                   </div>
-                  <span style={{ fontWeight: 600, color: '#007aff' }}>
-                    {fechaTexto}
-                  </span>
+                  <span style={{ fontWeight: 600, color: '#007aff' }}>{fechaTexto}</span>
                 </button>
               </div>
 
               <div style={{ margin: '50px 0 10px 20px', textAlign: 'left' }}>
-                <IonText color="medium">
-                  Redes Sociales (Opcional)
-                </IonText>
+                <IonText color="medium">Redes Sociales (Opcional)</IonText>
               </div>
-
-              {/* FACEBOOK */}
-              <IonItem style={styles.itemInput}>
-                <IonIcon
-                  icon={logoFacebook}
-                  slot="start"
-                  style={{ color: '#1877F2', marginTop: '16px', paddingRight: '12px' }}
-                />
-                <div style={{ width: '100%' }}>
-                  <IonLabel position="stacked">
-                    Link de Perfil Facebook
-                  </IonLabel>
-                  <IonInput
-                    type="url"
-                    value={linkFb}
-                    onIonInput={(e) => setLinkFb(e.detail.value)}
-                    style={{ borderBottom: '1px solid #d1d1d6' }}
-                  />
-                </div>
-              </IonItem>
 
               {/* TIKTOK */}
               <IonItem style={styles.itemInput}>
-                <IonIcon
-                  icon={logoTiktok}
-                  slot="start"
-                  style={{ color: '#000', marginTop: '16px', paddingRight: '12px' }}
-                />
+                <IonIcon icon={logoTiktok} slot="start" style={{ color: '#000', marginTop: '16px', paddingRight: '12px' }} />
                 <div style={{ width: '100%' }}>
-                  <IonLabel position="stacked">
-                    Link de Perfil TikTok
-                  </IonLabel>
+                  <IonLabel position="stacked">Link de Perfil TikTok</IonLabel>
                   <IonInput
                     type="url"
                     value={linkTk}
@@ -198,19 +185,12 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
                   />
                 </div>
               </IonItem>
-
             </IonList>
 
-            {error && (
-              <IonText color="danger">
-                <p><small><strong>{error}</strong></small></p>
-              </IonText>
-            )}
-
-            <div style={{ ...styles.sidePaddingContainer, marginTop: '30px' }}>
+            <div style={{ ...styles.sidePaddingContainer, marginTop: '80px' }}>
               <IonButton
                 expand="block"
-				color="success"
+                color="success"
                 onClick={handleGuardar}
                 disabled={loading}
                 style={{ height: '54px', '--border-radius': '12px', fontWeight:'600' }}
@@ -225,14 +205,12 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
           <div style={styles.centered}>
             <IonIcon icon={timeOutline} style={{ fontSize: '80px', color: 'orange' }} />
             <h2 className="ys-text" style={{ marginTop: '24px' }}>Solicitud en Revisión</h2>
-            <p style={{ color: '#666', maxWidth: '250px' }}>
-              Tus datos han sido enviados exitosamente.
-            </p>
+            <p style={{ color: '#666', maxWidth: '250px' }}>Tus datos han sido enviados exitosamente.</p>
             <IonSpinner name="dots" style={{ marginTop: '20px' }} />
           </div>
         )}
 
-        {/* DATE PICKER */}
+        {/* DATE PICKER MODAL */}
         <IonModal
           isOpen={showDatePicker}
           onDidDismiss={() => setShowDatePicker(false)}
@@ -241,20 +219,18 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
         >
           <IonHeader>
             <IonToolbar>
-              <IonTitle>Seleccionar Fecha</IonTitle>
+              <IonTitle>Fecha de nacimiento</IonTitle>
               <IonButtons slot="end">
-                <IonButton onClick={() => setShowDatePicker(false)}>
-                  Listo
-                </IonButton>
+                <IonButton onClick={() => setShowDatePicker(false)}>Listo</IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
           <IonContent>
             <IonDatetime
               presentation="date"
-			  preferWheel={true}
+              preferWheel={true}
               locale="es-ES"
-			  size="cover"
+              size="cover"
               onIonChange={handleDateChange}
               value={fechaNacimiento || '2000-01-01'}
             />
@@ -266,9 +242,6 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
   );
 };
 
-/* =======================
-   ESTILOS
-======================= */
 const styles = {
   itemInput: {
     backgroundColor: '#f2f2f7',
