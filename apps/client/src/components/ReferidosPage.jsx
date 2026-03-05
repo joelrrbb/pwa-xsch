@@ -1,17 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonBackButton,
   IonButtons, IonGrid, IonRow, IonCol, IonIcon, IonModal, IonItem,
-  IonLabel, IonInput, IonButton, IonText, IonToast, IonSpinner, IonDatetime, IonImg
+  IonLabel, IonInput, IonButton, IonText, IonToast, IonSpinner, IonDatetime
 } from '@ionic/react';
+
 import MembersProgressBar from '../components/MembersProgressBar';
-import { checkmarkCircle, timeOutline, personAddOutline, closeCircleOutline} from 'ionicons/icons';
+import { checkmarkCircle, timeOutline, personAddOutline, closeCircleOutline } from 'ionicons/icons';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const GET_USER_CONFIG = (user) => {
+
   if (!user) return [];
+
   if (user.member_type === 1) {
+
     return [
       { id_slot: 1, member_type: 0, tier: null },
       { id_slot: 2, member_type: 0, tier: null },
@@ -19,181 +23,342 @@ const GET_USER_CONFIG = (user) => {
       { id_slot: 4, member_type: 1, tier: (user.tier || 1) + 1 },
       { id_slot: 5, member_type: 1, tier: (user.tier || 1) + 1 }
     ];
+
   }
+
   if (user.member_type === 2) {
-    return Array.from({ length: 10 }, (_, i) => ({ id_slot: i + 1, member_type: 0, tier: null }));
+
+    return Array.from({ length: 10 }, (_, i) => ({
+      id_slot: i + 1,
+      member_type: 0,
+      tier: null
+    }));
+
   }
-  return Array.from({ length: 20 }, (_, i) => ({ id_slot: i + 1, member_type: 0, tier: null }));
+
+  return Array.from({ length: 20 }, (_, i) => ({
+    id_slot: i + 1,
+    member_type: 0,
+    tier: null
+  }));
+
 };
 
 const ReferidosPage = () => {
 
   const [currentUser] = useState(() => {
+
     const saved = localStorage.getItem('user_session');
+
     return saved
       ? JSON.parse(saved)
       : { id: 'dcbc31f9-14e5-4757-8acf-7f5e11f7f797', phone: '700000', tier: 1, member_type: 1 };
+
   });
-  
+
   const [referidosDB, setReferidosDB] = useState([]);
+
   const [showModal, setShowModal] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false); // Estado para el modal de fecha
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const [showToast, setShowToast] = useState({ show: false, msg: '', color: 'success' });
-  const [formData, setFormData] = useState({ name: '', phone: '', ci: '', fechaNac: '' });
-  const generateAccessCode = () => Math.floor(100000 + Math.random() * 900000).toString();
-  const [countdown, setCountdown] = useState({ active: true, display: "" });
 
-  const slotsConfig = GET_USER_CONFIG(currentUser);
+  const [showToast, setShowToast] = useState({
+    show: false,
+    msg: '',
+    color: 'success'
+  });
+
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    ci: '',
+    fechaNac: ''
+  });
+
+  const generateAccessCode = () =>
+    Math.floor(100000 + Math.random() * 900000).toString();
+
+  const [countdown, setCountdown] = useState({
+    active: true,
+    display: ""
+  });
+
+  const slotsConfig = useMemo(() =>
+    GET_USER_CONFIG(currentUser)
+  , [currentUser]);
+
+  const referidosMap = useMemo(() => {
+
+    const map = {};
+    referidosDB.forEach(r => map[r.id_slot] = r);
+    return map;
+
+  }, [referidosDB]);
 
   const loadData = useCallback(async () => {
-    setFetching(true);
+
+    const controller = new AbortController();
+
     try {
-      const res = await fetch(`${API_BASE_URL}/get-referidos?referrer_id=${currentUser.id}`);
+
+      setFetching(true);
+
+      const res = await fetch(
+        `${API_BASE_URL}/get-referidos?referrer_id=${currentUser.id}`,
+        { signal: controller.signal }
+      );
+
       const result = await res.json();
-      if (result.code === 0) setReferidosDB(result.data);
+
+      if (result.code === 0) {
+        setReferidosDB(result.data);
+      }
+
     } catch (e) {
-      console.error('Error cargando referidos');
+
+      if (e.name !== 'AbortError') {
+        console.error('Error cargando referidos');
+      }
+
     } finally {
+
       setFetching(false);
+
     }
+
+    return () => controller.abort();
+
   }, [currentUser.id]);
-  
-  
-  
- useEffect(() => {
-  // Solo ejecutar si existe la fecha Y el usuario es tipo 1
-  if (!currentUser?.created_at || currentUser?.member_type !== 1) return;
 
-  const baseDate = new Date(currentUser.created_at.replace(" ", "T"));
-  const targetDate = new Date(baseDate);
-  targetDate.setDate(baseDate.getDate() + 3);
-
-  const updateTimer = () => {
-    const ahora = new Date();
-    const diff = targetDate.getTime() - ahora.getTime();
-
-    if (diff <= 0) {
-      setCountdown({ active: false, display: "Tiempo agotado" });
-      return;
-    }
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-    const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-
-    setCountdown({ 
-      active: true, 
-      display: `${d} días ${h}:${m}:${s}` 
-    });
-  };
-
-  const timerId = setInterval(updateTimer, 1000);
-  updateTimer();
-
-  return () => clearInterval(timerId);
-}, [currentUser]);
-  
-  
-  
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const openSlot = (config, existingData) => {
-    if (existingData) return;
-    setSelectedSlot(config);
-    setFormData({ name: '', phone: '', ci: '', fechaNac: '' });
-    setShowModal(true);
-  };
+  useEffect(() => {
 
-  const handleDateChange = (e) => {
-    const value = e.detail.value;
-    const formattedDate = value ? value.split('T')[0] : '';
-    setFormData({ ...formData, fechaNac: formattedDate });
-  };
+    if (!currentUser?.created_at || currentUser?.member_type !== 1) return;
 
-  const handleSave = async () => {
-    const isVoluntary = selectedSlot.member_type === 1;
+    const baseDate = new Date(currentUser.created_at.replace(" ", "T"));
+    const targetDate = new Date(baseDate);
 
-    // 1. Validaciones para Voluntario
-    if (isVoluntary) {
-      if (!formData.phone || !formData.name) {
-        alert('Nombre y Celular requeridos');
-        return;
-      }
-      // Validación de formato de celular (Empieza con 6 o 7 y tiene 8 dígitos)
-      const phoneRegex = /^[67]\d{7}$/;
-      if (!phoneRegex.test(formData.phone)) {
-        setShowToast({ 
-          show: true, 
-          msg: 'Formato de celular incorrecto.', 
-          color: 'warning' 
+    targetDate.setDate(baseDate.getDate() + 3);
+
+    const updateTimer = () => {
+
+      const diff = targetDate - Date.now();
+
+      if (diff <= 0) {
+
+        setCountdown({
+          active: false,
+          display: "Tiempo agotado"
         });
-        return;
-      }
-    }
 
-    if (!isVoluntary && !formData.ci) {
-      alert('CI requerido');
+        return;
+
+      }
+
+      const d = Math.floor(diff / 86400000);
+
+      const h = Math.floor((diff % 86400000) / 3600000)
+        .toString()
+        .padStart(2, '0');
+
+      const m = Math.floor((diff % 3600000) / 60000)
+        .toString()
+        .padStart(2, '0');
+
+      const s = Math.floor((diff % 60000) / 1000)
+        .toString()
+        .padStart(2, '0');
+
+      setCountdown({
+        active: true,
+        display: `${d} días ${h}:${m}:${s}`
+      });
+
+    };
+
+    updateTimer();
+
+    const timer = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(timer);
+
+  }, [currentUser?.created_at, currentUser?.member_type]);
+
+  const openSlot = useCallback((config, existingData) => {
+
+    if (existingData) return;
+
+    setSelectedSlot(config);
+
+    setFormData({
+      name: '',
+      phone: '',
+      ci: '',
+      fechaNac: ''
+    });
+
+    setShowModal(true);
+
+  }, []);
+
+  const handleDateChange = useCallback((e) => {
+
+    const value = e.detail.value;
+
+    const formattedDate = value
+      ? value.split('T')[0]
+      : '';
+
+    setFormData(prev => ({
+      ...prev,
+      fechaNac: formattedDate
+    }));
+
+  }, []);
+
+  const handleSave = useCallback(async () => {
+
+  const isVoluntary = selectedSlot.member_type === 1;
+
+  if (isVoluntary) {
+
+    if (!formData.phone || !formData.name) {
+      alert('Nombre y Celular requeridos');
       return;
     }
 
-    setLoading(true);
-	const accessCode = isVoluntary ? generateAccessCode() : null;
-    const payload = {
-      name: isVoluntary ? formData.name : 'Invitado',
-      phone: isVoluntary ? formData.phone : Math.floor(1000000 + Math.random() * 9000000).toString(),
-      identity_card: formData.ci,
-      birth_date: formData.fechaNac || null,
-      member_type: Number(selectedSlot.member_type),
-      tier: isVoluntary ? Number(selectedSlot.tier) : null,
-      is_verified: isVoluntary ? 0 : 1,
-      referrer_id: currentUser.id,
-	  access_code: accessCode,
-      id_slot: selectedSlot.id_slot
-    };
-	
-	console.log('📦 ENVIANDO PAYLOAD AL BACKEND:', payload);
+    const phoneRegex = /^[67]\d{7}$/;
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/add-user`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+    if (!phoneRegex.test(formData.phone)) {
+      setShowToast({
+        show: true,
+        msg: 'Formato de celular incorrecto.',
+        color: 'warning'
       });
-      const result = await response.json();
-      if (result.code === 0) {
-        setShowToast({ show: true, msg: '¡Registro exitoso!', color: 'success' });
-        setShowModal(false);
-        loadData();
-
-        // --- LÓGICA DE WHATSAPP PARA VOLUNTARIOS ---
-        if (isVoluntary) {
-          const mensaje = 
-			`¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
-            `https://pwa-xsch-client.vercel.app/\n\n` +
-            `Tu código es: *${accessCode}*`;
-          const encodedMsg = encodeURIComponent(mensaje);
-          const whatsappUrl = `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
-
-          // Redirigir después de 1.5 segundos para que vea el Toast
-          window.location.assign(whatsappUrl);
-        }
-		
-      } else {
-        setShowToast({ show: true, msg: result.msg, color: 'danger' });
-      }
-    } catch (error) {
-      setShowToast({ show: true, msg: 'Error de conexión', color: 'danger' });
-    } finally {
-      setLoading(false);
+      return;
     }
+
+  }
+
+  if (!isVoluntary && !formData.ci) {
+    alert('CI requerido');
+    return;
+  }
+
+  setLoading(true);
+
+  const accessCode = isVoluntary
+    ? generateAccessCode()
+    : null;
+
+  const payload = {
+
+    name: isVoluntary ? formData.name : 'Invitado',
+
+    phone: isVoluntary
+      ? formData.phone
+      : Math.floor(1000000 + Math.random() * 9000000).toString(),
+
+    identity_card: formData.ci,
+
+    birth_date: formData.fechaNac || null,
+
+    member_type: Number(selectedSlot.member_type),
+
+    tier: isVoluntary
+      ? Number(selectedSlot.tier)
+      : null,
+
+    is_verified: isVoluntary ? 0 : 1,
+
+    referrer_id: currentUser.id,
+
+    access_code: accessCode,
+
+    id_slot: selectedSlot.id_slot
+
   };
-  
+
+  try {
+
+    const response = await fetch(`${API_BASE_URL}/add-user`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (result.code === 0) {
+
+      setShowToast({
+        show: true,
+        msg: '¡Registro exitoso!',
+        color: 'success'
+      });
+
+      setShowModal(false);
+
+      // 🔥 OPTIMISTIC UI
+      setReferidosDB(prev => [
+        ...prev,
+        {
+          id_slot: selectedSlot.id_slot,
+          name: payload.name,
+          member_type: payload.member_type,
+          tier: payload.tier,
+          is_verified: payload.is_verified
+        }
+      ]);
+
+      if (isVoluntary) {
+
+        const mensaje =
+          `¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
+          `https://pwa-xsch-client.vercel.app/\n\n` +
+          `Tu código es: *${accessCode}*`;
+
+        const encodedMsg = encodeURIComponent(mensaje);
+
+        const whatsappUrl =
+          `https://wa.me/591${formData.phone}?text=${encodedMsg}`;
+
+        window.location.assign(whatsappUrl);
+
+      }
+
+    } else {
+
+      setShowToast({
+        show: true,
+        msg: result.msg,
+        color: 'danger'
+      });
+
+    }
+
+  } catch (error) {
+
+    setShowToast({
+      show: true,
+      msg: 'Error de conexión',
+      color: 'danger'
+    });
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
+}, [formData, selectedSlot, currentUser]);
+
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
@@ -285,7 +450,7 @@ const ReferidosPage = () => {
     <IonRow>
       {slotsConfig.map((config, i) => {
         const isVoluntario = config.member_type === 1;
-        const data = referidosDB.find(d => d.id_slot === config.id_slot);
+        const data = referidosMap[config.id_slot];
         const isRejected = data?.is_verified === 3;
         const isConfirmed = data?.is_verified >= 2;
         const isPending = data && data.is_verified < 2;
@@ -441,9 +606,8 @@ const ReferidosPage = () => {
 
       </IonContent>
     </IonPage>
-	
-	
   );
+
 };
 
 export default ReferidosPage;
