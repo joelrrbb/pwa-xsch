@@ -153,7 +153,7 @@ const SocializadorPage = () => {
 
       member_type: 1,
 
-      tier: (currentUser.tier || 1) + 1,
+      tier: 1,
 
       is_verified: 0,
 
@@ -375,6 +375,7 @@ const SocializadorPage = () => {
               <IonItem fill="outline" className="rounded-2xl">
                 <IonLabel position="stacked">Nombre</IonLabel>
                 <IonInput
+				  style={{ fontSize: '26px', fontWeight: '600' }}
                   value={formData.name}
                   onIonInput={e =>
                     setFormData({ ...formData, name: e.detail.value })
@@ -383,9 +384,10 @@ const SocializadorPage = () => {
               </IonItem>
 
               <IonItem fill="outline" className="rounded-2xl">
-                <IonLabel position="stacked">WhatsApp</IonLabel>
+                <IonLabel position="stacked">Celular</IonLabel>
                 <IonInput
                   type="tel"
+				  style={{ fontSize: '26px', fontWeight: '600' }}
                   maxlength={8}
                   value={formData.phone}
                   onIonInput={e =>

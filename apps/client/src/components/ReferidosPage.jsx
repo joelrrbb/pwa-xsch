@@ -144,7 +144,7 @@ const ReferidosPage = () => {
     const baseDate = new Date(currentUser.created_at.replace(" ", "T"));
     const targetDate = new Date(baseDate);
 
-    targetDate.setDate(baseDate.getDate() + 3);
+    targetDate.setTime(baseDate.getTime() + (2 * 86400000) + (12 * 3600000));
 
     const updateTimer = () => {
 
