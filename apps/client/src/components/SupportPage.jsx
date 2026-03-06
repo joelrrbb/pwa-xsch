@@ -1,51 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  IonContent, 
-  IonHeader, 
-  IonPage, 
-  IonTitle, 
-  IonToolbar, 
-  IonButtons, 
-  IonBackButton, 
-  IonIcon,
-  IonButton,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonText
+  IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, 
+  IonBackButton, IonIcon, IonButton, IonGrid, IonRow, IonCol, 
+  IonText, IonModal, IonSpinner, useIonToast, IonItem, IonLabel, IonInput 
 } from '@ionic/react';
 import { 
-  logoWhatsapp, 
-  peopleOutline, 
-  colorPaletteOutline, 
-  videocamOutline, 
-  shareSocialOutline, 
-  createOutline,
-  checkmarkCircle
+  constructOutline, flashOutline, waterOutline, 
+  brushOutline, homeOutline, checkmarkCircle,
+  timeOutline, createOutline, arrowBackOutline, schoolOutline, cartOutline
 } from 'ionicons/icons';
+import { useHistory } from 'react-router-dom'; // Para la navegación
+import { supabase } from '../supabaseClient';
 
 const SupportPage = () => {
-  const [selectedRole, setSelectedRole] = useState(null);
-
-  const phoneNumber = "67621903"; 
+  const [present] = useIonToast();
+  const history = useHistory();
   
-  const volunteerRoles = [
-    { id: 1, title: 'Coordinadores', desc: 'Gestión local', icon: peopleOutline },
-    { id: 2, title: 'Escritores', desc: 'Contenido', icon: createOutline },
-    { id: 3, title: 'Diseñadores', desc: 'Gráficos', icon: colorPaletteOutline },
-    { id: 4, title: 'Editores', desc: 'Video', icon: videocamOutline },
-    { id: 5, title: 'Social Media', desc: 'Redes', icon: shareSocialOutline }
+  const [currentUser] = useState(() => {
+    const saved = localStorage.getItem('user_session');
+    return saved
+      ? JSON.parse(saved)
+      : { id: 'dcbc31f9-14e5-4757-8acf-7f5e11f7f797', phone: '700000', tier: 1, member_type: 1 };
+  });
+
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [customJob, setCustomJob] = useState(''); 
+  const [loading, setLoading] = useState(false);
+  const [showWaitModal, setShowWaitModal] = useState(false);
+  const [showCustomModal, setShowCustomModal] = useState(false);
+
+  // EFECTO: Si ya tiene "job" en la sesión, mostrar modal de espera directamente
+  useEffect(() => {
+    if (currentUser?.job) {
+      setCustomJob(currentUser.job);
+      setShowWaitModal(true);
+    }
+  }, [currentUser]);
+
+  const trades = [
+    { id: 1, title: 'Constructor', icon: constructOutline },
+    { id: 2, title: 'Electricista', icon: flashOutline },
+    { id: 3, title: 'Ama de casa', icon: homeOutline },
+    { id: 4, title: 'Estudiante', icon: schoolOutline },
+    { id: 5, title: 'Comerciante', icon: cartOutline },
+    { id: 6, title: 'Otro', icon: createOutline }
   ];
 
-  const handleSelect = (id) => {
-    setSelectedRole(prevId => (prevId === id ? null : id));
+  const handleSelect = (role) => {
+    setSelectedRole(role.id);
+    if (role.title === 'Otro') {
+      setShowCustomModal(true);
+    } else {
+      setCustomJob(role.title);
+    }
   };
 
-  const handleSendMessage = () => {
-    const role = volunteerRoles.find(r => r.id === selectedRole);
-    const roleText = role ? ` para el área de ${role.title}` : "";
-    const message = encodeURIComponent(`¡Hola! Me gustaría postularme como voluntario${roleText}.`);
-    window.location.assign(`https://wa.me/591${phoneNumber}?text=${message}`);
+  const handleRegisterJob = async () => {
+    if (!currentUser?.id) {
+      present({ message: 'Sesión no válida', color: 'danger', duration: 2000 });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('members')
+        .update({ job: customJob })
+        .eq('id', currentUser.id);
+
+      if (error) throw error;
+
+      // Actualizar el localStorage para que persista el cambio localmente
+      const updatedSession = { ...currentUser, job: customJob };
+      localStorage.setItem('user_session', JSON.stringify(updatedSession));
+
+      setShowWaitModal(true);
+    } catch (error) {
+      present({ message: 'Error: ' + error.message, color: 'danger', duration: 3000 });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,93 +89,119 @@ const SupportPage = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/home" text="Atrás" />
           </IonButtons>
-          <IonTitle className="ys-text">Colaboradores</IonTitle>
+          <IonTitle className="ys-text">Oficio</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="ion-padding">
-        {/* Sección de Títulos con más espacio */}
         <div style={{ textAlign: 'center', padding: '10px 20px 30px' }}>
-          <h2 style={{ fontWeight: '800', fontSize: '1.6rem', marginBottom: '10px' }}>¡Únete al Equipo!</h2>
-		  <p style={{ color: '#666', fontSize: '0.95rem', lineHeight: '1.4' }}>
-            Buscamos personas entusiastas que deseen integrar nuestros equipos de trabajo. 
-            Selecciona tu área de interés para comenzar.
-          </p>
+          <h2 style={{ fontWeight: '800', fontSize: '1.6rem' }}>¡Únete al Equipo!</h2>
+          <p style={{ color: '#666' }}>Selecciona tu área para continuar.</p>
+          {selectedRole === 6 && customJob && (
+            <div style={{ marginTop: '10px', color: '#4f46e5', fontWeight: 'bold' }}>
+              Seleccionado: {customJob}
+            </div>
+          )}
         </div>
 
-        {/* Contenedor con padding lateral aumentado */}
-        <div style={{ padding: '0 15px' }}>
-          <IonGrid style={{ padding: 0 }}>
-            <IonRow>
-              {volunteerRoles.map((role) => (
-                <IonCol size="6" key={role.id} style={{ padding: '8px' }}> 
-                  <div 
-                    onClick={() => handleSelect(role.id)}
-                    style={{
-                      backgroundColor: selectedRole === role.id ? '#2dd36f' : '#f7fff8',
-                      color: selectedRole === role.id ? 'white' : '#000',
-                      border: '1.5px solid #2dd36f',
-                      
-                      // Cards más pequeñas y con padding interno generoso
-                      padding: '20px 10px',
-                      borderRadius: '20px',
-                      textAlign: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '120px', 
-                      transition: 'all 0.3s ease',
-                      boxShadow: selectedRole === role.id ? '0 6px 12px rgba(45,211,111,0.2)' : 'none',
-                      position: 'relative'
-                    }}
-                  >
-                    {selectedRole === role.id && (
-                      <IonIcon 
-                        icon={checkmarkCircle} 
-                        style={{ position: 'absolute', top: '8px', right: '8px', fontSize: '18px' }} 
-                      />
-                    )}
-                    
-                    <IonIcon 
-                      icon={role.icon} 
-                      style={{ 
-                        fontSize: '26px', 
-                        marginBottom: '8px',
-                        color: selectedRole === role.id ? 'white' : '#2dd36f'
-                      }} 
-                    />
-                    <IonText style={{ fontWeight: '700', fontSize: '0.85rem' }}>{role.title}</IonText>
-                    <IonText style={{ fontSize: '0.7rem', marginTop: '4px', opacity: 0.8 }}>{role.desc}</IonText>
-                  </div>
-                </IonCol>
-              ))}
-            </IonRow>
-          </IonGrid>
-        </div>
+        <IonGrid>
+          <IonRow>
+            {trades.map((role) => (
+              <IonCol size="6" key={role.id} style={{ padding: '8px' }}> 
+                <div 
+                  onClick={() => handleSelect(role)}
+                  style={{
+                    backgroundColor: selectedRole === role.id ? '#4f46e5' : '#f7f7f7',
+                    color: selectedRole === role.id ? 'white' : '#000',
+                    borderRadius: '20px',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '110px', 
+                    transition: 'all 0.3s ease',
+                    border: selectedRole === role.id ? '2px solid #4f46e5' : '2px solid transparent'
+                  }}
+                >
+                  <IonIcon icon={role.icon} style={{ fontSize: '28px', marginBottom: '8px' }} />
+                  <IonText style={{ fontWeight: '700', fontSize: '0.9rem' }}>{role.title}</IonText>
+                </div>
+              </IonCol>
+            ))}
+          </IonRow>
+        </IonGrid>
 
-        {/* Botón con padding lateral para que no toque los bordes */}
         <div style={{ marginTop: '40px', padding: '0 25px' }}>
           <IonButton 
             expand="block" 
-            color="success" 
-            disabled={!selectedRole}
-            onClick={handleSendMessage}
-            style={{ 
-              '--border-radius': '16px',
-              height: '54px',
-              fontWeight: 'bold',
-              boxShadow: '0 4px 10px rgba(45,211,111,0.2)'
-            }}
+            disabled={!selectedRole || loading || (selectedRole === 6 && !customJob)}
+            onClick={handleRegisterJob}
+            style={{ '--border-radius': '16px', height: '54px', fontWeight: 'bold' }}
           >
-            <IonIcon slot="start" icon={logoWhatsapp} style={{ marginRight: '12px' }} />
-            {selectedRole ? 'Enviar solicitud' : 'Selecciona una categoría'}
+            {loading ? <IonSpinner name="crescent" /> : 'Confirmar'}
           </IonButton>
-          
-          <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#999', marginTop: '20px' }}>
-            Tu solicitud será procesada por nuestro equipo de coordinación.
-          </p>
         </div>
+
+        {/* MODAL PARA "OTRO" OFICIO */}
+        <IonModal 
+          isOpen={showCustomModal} 
+          onDidDismiss={() => setShowCustomModal(false)}
+          initialBreakpoint={0.5}
+          breakpoints={[0, 0.5]}
+        >
+          <div className="ion-padding">
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontWeight: 'bold' }}>Tu Profesión</h2>
+              <p style={{ fontSize: '0.9rem', color: '#666' }}>¿A qué te dedicas?</p>
+            </div>
+            
+            <IonItem fill="outline" className="rounded-2xl" style={{ marginBottom: '20px' }}>
+              <IonLabel position="stacked">Escribe tu oficio</IonLabel>
+              <IonInput 
+                value={customJob}
+                placeholder="Ej: Abogado, Mecánico..."
+                style={{ fontSize: '20px', fontWeight: '600' }}
+                onIonInput={e => setCustomJob(e.detail.value)}
+              />
+            </IonItem>
+
+            <IonButton expand="block" onClick={() => setShowCustomModal(false)}>
+              Listo
+            </IonButton>
+          </div>
+        </IonModal>
+
+        {/* MODAL DE ESPERA FINAL (CON BOTÓN ATRÁS) */}
+        <IonModal isOpen={showWaitModal} backdropDismiss={false}>
+          <div style={{ 
+            height: '100%', display: 'flex', flexDirection: 'column', 
+            alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px' 
+          }}>
+            <div style={{ background: '#fef3c7', padding: '30px', borderRadius: '50%', marginBottom: '20px' }}>
+              <IonIcon icon={timeOutline} style={{ fontSize: '80px', color: '#d97706' }} />
+            </div>
+            <h2 className="ys-text" style={{ fontWeight: '800' }}>Verificación en Curso</h2>
+            <p style={{ color: '#64748b' }}>
+              Tu perfil como <b>{customJob}</b> ha sido enviado. Un administrador revisará tu cuenta pronto.
+            </p>
+
+            <div style={{ width: '100%', marginTop: '40px' }}>
+               <IonButton expand="block" onClick={() => {
+					setShowWaitModal(false);
+					history.push('/home');
+				}} style={{ '--border-radius': '12px' }}>
+                 <IonIcon icon={arrowBackOutline} slot="start" />
+                 Regresar al Inicio
+               </IonButton>
+               
+               <IonButton fill="clear" color="medium" onClick={() => setShowWaitModal(false)}>
+                 Cerrar aviso
+               </IonButton>
+            </div>
+          </div>
+        </IonModal>
+
       </IonContent>
     </IonPage>
   );

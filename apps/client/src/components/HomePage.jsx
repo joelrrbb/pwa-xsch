@@ -58,7 +58,7 @@ export default function HomePage() {
     const syncFromSupabase = async () => {
       const { data, error } = await supabase
         .from('members')
-        .select('is_verified, identity_card, birth_date, points, tier, member_type, manager_phone,name, created_at')
+        .select('is_verified,identity_card,birth_date,points,tier,member_type,manager_phone,name,created_at,job,is_socializer')
         .eq('id', session.id)
         .maybeSingle();
 
@@ -216,31 +216,32 @@ export default function HomePage() {
   </IonRouterLink>
 
   {/* Imagen 2: Donación */}
-{Number(session.member_type) === 1 ? (
-        <IonRouterLink
-          routerLink="/socializador"
-          routerDirection="forward"
-          style={{ flex: 1 }}
-        >
-          <img
-            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771701088/support_i2xzn4.webp"
-            alt="Support"
-            style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
-          />
-        </IonRouterLink>
-      ) : (
-        <IonRouterLink
-          routerLink="/donation"
-          routerDirection="forward"
-          style={{ flex: 1 }}
-        >
-          <img
-            src="https://res.cloudinary.com/dljymqntm/image/upload/v1771861945/b2_kv2uvm_1_vsll81.webp"
-            alt="Donar"
-            style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
-          />
-        </IonRouterLink>
-      )}
+{session.is_socializer === false ? (
+  <IonRouterLink
+    routerLink="/support"
+    routerDirection="forward"
+    style={{ flex: 1 }}
+  >
+    <img
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771701088/support_i2xzn4.webp"
+      alt="Support"
+      style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
+    />
+  </IonRouterLink>
+) : (
+  <IonRouterLink
+    routerLink="/socializador"
+    routerDirection="forward"
+    style={{ flex: 1 }}
+  >
+    <img
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771861945/b2_kv2uvm_1_vsll81.webp"
+      alt="Donar"
+      style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
+    />
+  </IonRouterLink>
+)}
+	  
     </div>
 
     {/* Swiper Condicional: PlanSwiper para Voluntarios, EventSwiper para el resto */}
@@ -258,48 +259,6 @@ export default function HomePage() {
 						{/* Nuevo componente de Gemini */}
 					<GeminiCommenter userId={session.id} />
 					
-				{/* Banner Condicional: Descargas para Voluntarios (1), Tienda para el resto (>=2) */}
-				<IonText color="dark"><h2 className="ys-text" style={{ marginLeft: '8px' }}>Material adicional</h2></IonText>
-{Number(session.member_type) === 1 ? (
-  <IonRouterLink
-    routerLink="/downloads"
-    routerDirection="forward"
-    style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
-  >
-    <img
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771714558/digital_s9k6rj.webp"
-      alt="Descargas"
-      style={{
-        width: '100%',
-        height: '120px',
-        objectFit: 'cover',
-        borderRadius: '18px',
-        display: 'block',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-      }}
-    />
-  </IonRouterLink>
-) : (
-  <IonRouterLink
-    routerLink="/shop"
-    routerDirection="forward"
-    style={{ textDecoration: 'none', display: 'block', marginTop: '20px' }}
-  >
-    <img
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771713808/Untitled-2_a4b6l0.webp"
-      alt="Tienda"
-      style={{
-        width: '100%',
-        height: '120px',
-        objectFit: 'cover',
-        borderRadius: '18px',
-        display: 'block',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-      }}
-    />
-  </IonRouterLink>
-)}
-			
 				</>
 				
               )}

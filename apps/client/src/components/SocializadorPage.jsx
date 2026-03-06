@@ -249,7 +249,7 @@ const SocializadorPage = () => {
             <IonBackButton defaultHref="/home" text="Atrás" />
           </IonButtons>
 
-          <IonTitle className="ys-text">Socializadores</IonTitle>
+          <IonTitle className="ys-text">Socializador</IonTitle>
 
           {fetching && (
             <IonSpinner
@@ -290,7 +290,7 @@ const SocializadorPage = () => {
         </div>
 
         <div className="px-1 mb-4">
-          <h2 className="ys-text-sm">Mis Socializadores Extra</h2>
+          <h2 className="ys-text-sm">Mi estructura</h2>
         </div>
 
         <IonGrid className="ion-no-padding">
@@ -366,7 +366,7 @@ const SocializadorPage = () => {
             <div className="text-center mb-6">
               <h2 className="text-xl font-bold ys-text">Invitar Socio</h2>
               <p className="text-xs text-slate-500">
-                Agrega un voluntario fuera de tus slots principales
+                ¡Tu beneficio te espera! Solo necesitas invitar a 5 amigos.
               </p>
             </div>
 
