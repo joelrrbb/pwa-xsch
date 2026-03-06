@@ -484,10 +484,12 @@ const ReferidosPage = () => {
               onClick={() => openSlot(config, data)}
               className={`relative flex flex-col items-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] transition-all active:scale-90 ${cardStyle} ${isEmptyVoluntario ? 'animate-pulse-vibrate' : ''}`}
             >
-              {/* Badge superior reducido */}
-              <div className={`absolute -top-1.5 right-1 ${badgeColor} text-white text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm uppercase tracking-tighter`}>
-                {isVoluntario ? `T-${config.tier}` : 'Ref'}
-              </div>
+              {/* BADGE CONDICIONAL: Solo aparece si es voluntario (isVoluntario es true) */}
+			{isVoluntario && (
+				<div className={`absolute -top-1.5 right-1 ${badgeColor} text-white text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm uppercase tracking-tighter`}>
+				T-{config.tier}
+			</div>
+			)}
 
               {/* Icono central */}
               <div className="mb-1">

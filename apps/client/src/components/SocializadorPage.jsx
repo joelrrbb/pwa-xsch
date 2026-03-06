@@ -356,7 +356,7 @@ const SocializadorPage = () => {
     <IonIcon icon={checkmarkCircle} className="text-4xl mb-2" />
     <h3 className="text-lg font-bold">¡Red Completa!</h3>
     <p className="text-xs opacity-90 leading-tight mt-1">
-      Has alcanzado los 10 espacios. ¡Felicidades, ya aseguraste todos tus beneficios! 🚀
+     ¡Felicidades, ya aseguraste todos tus beneficios! 🚀
     </p>
   </div>
 )}
