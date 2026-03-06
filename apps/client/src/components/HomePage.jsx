@@ -235,7 +235,7 @@ export default function HomePage() {
     style={{ flex: 1 }}
   >
     <img
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1771861945/b2_kv2uvm_1_vsll81.webp"
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1772770185/soci_esfzid.webp"
       alt="Donar"
       style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
     />

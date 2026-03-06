@@ -454,6 +454,7 @@ const ReferidosPage = () => {
         const isRejected = data?.is_verified === 3;
         const isConfirmed = data?.is_verified >= 2;
         const isPending = data && data.is_verified < 2;
+		const isEmptyVoluntario = isVoluntario && !data;
 
         // Lógica de estilos
         let cardStyle = "bg-gray-50 border-gray-300 text-gray-400";
@@ -481,7 +482,7 @@ const ReferidosPage = () => {
           <IonCol size="3" key={i} className="p-[5px]"> {/* Espaciado interno entre slots */}
             <div
               onClick={() => openSlot(config, data)}
-              className={`relative flex flex-col items-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] transition-all active:scale-90 ${cardStyle}`}
+              className={`relative flex flex-col items-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] transition-all active:scale-90 ${cardStyle} ${isEmptyVoluntario ? 'animate-pulse-vibrate' : ''}`}
             >
               {/* Badge superior reducido */}
               <div className={`absolute -top-1.5 right-1 ${badgeColor} text-white text-[7px] px-1.5 py-0.5 rounded-full font-black shadow-sm uppercase tracking-tighter`}>
@@ -498,7 +499,7 @@ const ReferidosPage = () => {
                 {isRejected ? 'Rechazado' : 
                  isConfirmed ? (data?.name?.split(' ')[0] || 'OK') : 
                  isPending ? 'Espera' : 
-                 (isVoluntario ? 'Voluntario' : 'Invitado')}
+                 (isVoluntario ? 'Amigo' : 'Invitado')}
               </span>
             </div>
           </IonCol>
@@ -514,59 +515,66 @@ const ReferidosPage = () => {
 
         {/* MODAL PRINCIPAL DE REGISTRO */}
         <IonModal
-          isOpen={showModal}
-          onDidDismiss={() => setShowModal(false)}
-          initialBreakpoint={0.5}
-          breakpoints={[0, 0.5, 0.9]}
-        >
-          <div className="ion-padding pt-8">
-            <h2 className="text-xl font-bold mb-4 ml-[10px] ys-text">
-              Añadir {selectedSlot?.member_type === 1 ? 'Voluntario' : 'Invitado'}
-            </h2>
+  isOpen={showModal}
+  onDidDismiss={() => setShowModal(false)}
+  initialBreakpoint={0.6}
+  breakpoints={[0, 0.6, 0.9]}
+>
+  <div className="ion-padding pt-8">
+    <div className="mb-6 ml-[10px]">
+      <h2 className="text-xl font-bold ys-text">
+        Añadir {selectedSlot?.member_type === 1 ? 'amig@' : 'Invitad@'}
+      </h2>
+      {/* Párrafo descriptivo agregado */}
+      <p className="text-sm text-slate-500 mt-1 mr-3">
+        {selectedSlot?.member_type === 1 
+          ? 'Invita a tus amistades y juntos obtengan beneficios.' 
+          : 'Añade personas de confianza (familiares o amigos) que te apoyen el día de la votación.'}
+      </p>
+    </div>
 
-            <div className="space-y-4">
-              {selectedSlot?.member_type === 1 ? (
-                <>
-                  <IonItem fill="outline" className="rounded-xl">
-                    <IonLabel position="stacked">Nombre</IonLabel>
-                    <IonInput style={{ fontSize: '26px', fontWeight: '600' }} value={formData.name} onIonInput={e => setFormData({ ...formData, name: e.detail.value })} />
-                  </IonItem>
-                  <IonItem fill="outline" className="rounded-xl">
-                    <IonLabel position="stacked">Celular</IonLabel>
-                    <IonInput style={{ fontSize: '26px', fontWeight: '600' }}  maxlength={8} type="tel" value={formData.phone} onIonInput={e => setFormData({ ...formData, phone: e.detail.value })} />
-                  </IonItem>
-                </>
-              ) : (
-                <>
-                  <IonItem fill="outline" className="rounded-xl">
-                    <IonLabel position="stacked">Carnet de Identidad</IonLabel>
-                    <IonInput style={{ fontSize: '26px', fontWeight: '600' }} value={formData.ci} onIonInput={e => setFormData({ ...formData, ci: e.detail.value })} />
-                  </IonItem>
-                  
-                  {/* DISPARADOR DEL SELECTOR DE FECHA */}
-                  <IonItem fill="outline" className="rounded-xl" onClick={() => setShowDatePicker(true)}>
-                    <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
-                    <div className="py-3 font-semibold">
-                      {formData.fechaNac || 'Seleccionar fecha'}
-                    </div>
-                  </IonItem>
-                </>
-              )}
+    <div className="space-y-4">
+      {selectedSlot?.member_type === 1 ? (
+        <>
+          <IonItem fill="outline" className="rounded-xl">
+            <IonLabel position="stacked">Nombre</IonLabel>
+            <IonInput style={{ fontSize: '26px', fontWeight: '600' }} value={formData.name} onIonInput={e => setFormData({ ...formData, name: e.detail.value })} />
+          </IonItem>
+          <IonItem fill="outline" className="rounded-xl">
+            <IonLabel position="stacked">Celular</IonLabel>
+            <IonInput style={{ fontSize: '26px', fontWeight: '600' }} maxlength={8} type="tel" value={formData.phone} onIonInput={e => setFormData({ ...formData, phone: e.detail.value })} />
+          </IonItem>
+        </>
+      ) : (
+        <>
+          <IonItem fill="outline" className="rounded-xl">
+            <IonLabel position="stacked">Carnet de Identidad</IonLabel>
+            <IonInput style={{ fontSize: '26px', fontWeight: '600' }} value={formData.ci} onIonInput={e => setFormData({ ...formData, ci: e.detail.value })} />
+          </IonItem>
+          
+          <IonItem fill="outline" className="rounded-xl" onClick={() => setShowDatePicker(true)}>
+            <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
+            <div className="py-3 font-semibold">
+              {formData.fechaNac || 'Seleccionar fecha'}
             </div>
+          </IonItem>
+        </>
+      )}
+    </div>
 
-            <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-				<IonButton
-				expand="block"
-				color="success"
-				className="mt-8 font-bold h-12"
-				onClick={handleSave}
-				disabled={loading}
-			>
-				{loading ? <IonSpinner name="crescent" /> : 'Confirmar'}
-			</IonButton>
-			</div>
-          </div>
-        </IonModal>
+    <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+      <IonButton
+        expand="block"
+        color="success"
+        className="mt-8 font-bold h-12"
+        onClick={handleSave}
+        disabled={loading}
+      >
+        {loading ? <IonSpinner name="crescent" /> : 'Confirmar'}
+      </IonButton>
+    </div>
+  </div>
+</IonModal>
 
         {/* MODAL DEL SELECTOR DE FECHA (SE ABRE SOBRE EL ANTERIOR) */}
         <IonModal

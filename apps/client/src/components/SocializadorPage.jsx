@@ -67,8 +67,8 @@ const SocializadorPage = () => {
       if (result.code === 0) {
 
         const soloSocializadoresExtra = result.data.filter(
-          item => item.member_type === 1 && item.id_slot > 5
-        );
+			item => item.member_type === 1 && item.id_slot > 5 && item.id_slot <= 10
+		);
 
         setVoluntarios(soloSocializadoresExtra);
       }
@@ -100,14 +100,10 @@ const SocializadorPage = () => {
   */
 
   const nextSlot = useMemo(() => {
-
-    if (!voluntarios.length) return 6;
-
-    const max = Math.max(...voluntarios.map(v => v.id_slot));
-
-    return max + 1;
-
-  }, [voluntarios]);
+  if (!voluntarios.length) return 6;
+  const max = Math.max(...voluntarios.map(v => v.id_slot));
+  return max < 10 ? max + 1 : null; // Devuelve null si ya se alcanzó el límite
+}, [voluntarios]);
 
   /*
   ============================
@@ -330,29 +326,34 @@ const SocializadorPage = () => {
 
             ))}
 
-            <IonCol size="3" className="p-[4px]">
-
-              <div
-                onClick={() => {
-                  setFormData({ name: '', phone: '' });
-                  setShowModal(true);
-                }}
-                className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-95 transition-all"
-                style={{ minHeight: '75px' }}
-              >
-
-                <IonIcon icon={personAddOutline} className="text-2xl mb-1"/>
-
-                <span className="text-[8px] font-black uppercase">
-                  Nuevo
-                </span>
-
-              </div>
-
-            </IonCol>
+            {voluntarios.length < 10 && (
+      <IonCol size="3" className="p-[4px]">
+        <div
+          onClick={() => {
+            setFormData({ name: '', phone: '' });
+            setShowModal(true);
+          }}
+          className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-95 transition-all"
+          style={{ minHeight: '75px' }}
+        >
+          <IonIcon icon={personAddOutline} className="text-2xl mb-1"/>
+          <span className="text-[8px] font-black uppercase">Nuevo</span>
+        </div>
+      </IonCol>
+    )}
 
           </IonRow>
         </IonGrid>
+		
+		{voluntarios.length >= 10 && (
+  <div className="mt-6 mx-4 p-5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl text-center shadow-lg text-white animate-fade-in">
+    <IonIcon icon={checkmarkCircle} className="text-4xl mb-2" />
+    <h3 className="text-lg font-bold">¡Red Completa!</h3>
+    <p className="text-xs opacity-90 leading-tight mt-1">
+      Has alcanzado los 10 espacios. ¡Felicidades, ya aseguraste todos tus beneficios! 🚀
+    </p>
+  </div>
+)}
 
         <IonModal
           isOpen={showModal}
@@ -364,9 +365,9 @@ const SocializadorPage = () => {
           <div className="ion-padding pt-8">
 
             <div className="text-center mb-6">
-              <h2 className="text-xl font-bold ys-text">Invitar Socio</h2>
+              <h2 className="text-xl font-bold ys-text">Gana al invitar amig@s</h2>
               <p className="text-xs text-slate-500">
-                ¡Tu beneficio te espera! Solo necesitas invitar a 5 amigos.
+                ¡Invita a 5 amigos y asegura tu recompensa!
               </p>
             </div>
 

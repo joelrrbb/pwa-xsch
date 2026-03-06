@@ -7,7 +7,7 @@ import {
 import { 
   constructOutline, flashOutline, waterOutline, 
   brushOutline, homeOutline, checkmarkCircle,
-  timeOutline, createOutline, arrowBackOutline, schoolOutline, cartOutline
+  timeOutline, createOutline, arrowBackOutline, schoolOutline, cartOutline, carOutline
 } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom'; // Para la navegación
 import { supabase } from '../supabaseClient';
@@ -39,7 +39,7 @@ const SupportPage = () => {
 
   const trades = [
     { id: 1, title: 'Constructor', icon: constructOutline },
-    { id: 2, title: 'Electricista', icon: flashOutline },
+    { id: 2, title: 'Transportista', icon: carOutline },
     { id: 3, title: 'Ama de casa', icon: homeOutline },
     { id: 4, title: 'Estudiante', icon: schoolOutline },
     { id: 5, title: 'Comerciante', icon: cartOutline },
@@ -147,8 +147,8 @@ const SupportPage = () => {
         <IonModal 
           isOpen={showCustomModal} 
           onDidDismiss={() => setShowCustomModal(false)}
-          initialBreakpoint={0.5}
-          breakpoints={[0, 0.5]}
+          initialBreakpoint={0.4}
+          breakpoints={[0, 0.4]}
         >
           <div className="ion-padding">
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -157,7 +157,7 @@ const SupportPage = () => {
             </div>
             
             <IonItem fill="outline" className="rounded-2xl" style={{ marginBottom: '20px' }}>
-              <IonLabel position="stacked">Escribe tu oficio</IonLabel>
+              <IonLabel position="stacked">Escribe a que te dedicas</IonLabel>
               <IonInput 
                 value={customJob}
                 placeholder="Ej: Abogado, Mecánico..."
@@ -166,9 +166,11 @@ const SupportPage = () => {
               />
             </IonItem>
 
-            <IonButton expand="block" onClick={() => setShowCustomModal(false)}>
-              Listo
-            </IonButton>
+            <div style={{ marginTop: '20px', padding:'0 15px' }}>
+				<IonButton expand="block" onClick={() => setShowCustomModal(false)}>
+					Listo
+				</IonButton>
+			</div>
           </div>
         </IonModal>
 
@@ -181,9 +183,9 @@ const SupportPage = () => {
             <div style={{ background: '#fef3c7', padding: '30px', borderRadius: '50%', marginBottom: '20px' }}>
               <IonIcon icon={timeOutline} style={{ fontSize: '80px', color: '#d97706' }} />
             </div>
-            <h2 className="ys-text" style={{ fontWeight: '800' }}>Verificación en Curso</h2>
+            <h2 className="ys-text" style={{ fontWeight: '800' }}>Nos pondremos en contacto</h2>
             <p style={{ color: '#64748b' }}>
-              Tu perfil como <b>{customJob}</b> ha sido enviado. Un administrador revisará tu cuenta pronto.
+              Tu perfil como <b>{customJob}</b> ha sido enviado.
             </p>
 
             <div style={{ width: '100%', marginTop: '40px' }}>
