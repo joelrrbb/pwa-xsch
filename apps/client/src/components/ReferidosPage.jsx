@@ -530,8 +530,8 @@ const ReferidosPage = () => {
       {/* Párrafo descriptivo agregado */}
       <p className="text-sm text-slate-500 mt-1 mr-3">
         {selectedSlot?.member_type === 1 
-          ? 'Invita a tus amistades y juntos obtengan beneficios.' 
-          : 'Añade personas de confianza (familiares o amigos) que te apoyen el día de la votación.'}
+          ? '¡Pasa la voz! Invita a tus amistades a ser parte del cambio.' 
+          : 'Añade personas de confianza (familiares o amigos) que te den una mano el día de la votación.'}
       </p>
     </div>
 

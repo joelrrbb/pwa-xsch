@@ -110,6 +110,27 @@ export default function HomePage() {
     // }
   // }, [loading, session, showModal, showAlert]);
   
+useEffect(() => {
+  // Lista de celulares restringidos
+  const celularesBloqueados = ["68628846", "67372738", "68624131"];
+
+  if (session && session.phone) {
+    // Verificamos si el teléfono de la sesión está en la lista negra
+    const esNumeroBloqueado = celularesBloqueados.includes(session.phone.toString());
+
+    if (esNumeroBloqueado) {
+      console.log("Número restringido detectado. Iniciando timer de salida.");
+
+      const timer = setTimeout(() => {
+        localStorage.removeItem('user_session');
+        window.location.reload();
+      }, 5000); // 5 segundos
+
+      return () => clearTimeout(timer);
+    }
+  }
+}, [session]);
+  
 
   const handleLogout = () => {
     localStorage.removeItem('user_session');
