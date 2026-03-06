@@ -100,9 +100,15 @@ const SocializadorPage = () => {
   */
 
   const nextSlot = useMemo(() => {
-  if (!voluntarios.length) return 6;
+  // Si ya tenemos 5 o más, no permitimos más slots
+  if (voluntarios.length >= 5) return null;
+
+  // Si no hay voluntarios, empezamos en el slot 6
+  if (voluntarios.length === 0) return 6;
+
+  // Calculamos el siguiente slot basándonos en el máximo actual
   const max = Math.max(...voluntarios.map(v => v.id_slot));
-  return max < 10 ? max + 1 : null; // Devuelve null si ya se alcanzó el límite
+  return max + 1;
 }, [voluntarios]);
 
   /*
@@ -326,26 +332,26 @@ const SocializadorPage = () => {
 
             ))}
 
-            {voluntarios.length < 10 && (
-      <IonCol size="3" className="p-[4px]">
-        <div
-          onClick={() => {
-            setFormData({ name: '', phone: '' });
-            setShowModal(true);
-          }}
-          className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-95 transition-all"
-          style={{ minHeight: '75px' }}
-        >
-          <IonIcon icon={personAddOutline} className="text-2xl mb-1"/>
-          <span className="text-[8px] font-black uppercase">Nuevo</span>
-        </div>
-      </IonCol>
-    )}
+            {nextSlot !== null && (
+  <IonCol size="3" className="p-[4px]">
+    <div
+      onClick={() => {
+        setFormData({ name: '', phone: '' });
+        setShowModal(true);
+      }}
+      className="flex flex-col items-center justify-center pt-5 pb-2 rounded-[1.2rem] border-[1.5px] border-dashed border-indigo-300 bg-indigo-50/50 text-indigo-400 active:scale-95 transition-all"
+      style={{ minHeight: '75px' }}
+    >
+      <IonIcon icon={personAddOutline} className="text-2xl mb-1"/>
+      <span className="text-[8px] font-black uppercase">Nuevo</span>
+    </div>
+  </IonCol>
+)}
 
           </IonRow>
         </IonGrid>
 		
-		{voluntarios.length >= 10 && (
+		{voluntarios.length >= 5 && (
   <div className="mt-6 mx-4 p-5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl text-center shadow-lg text-white animate-fade-in">
     <IonIcon icon={checkmarkCircle} className="text-4xl mb-2" />
     <h3 className="text-lg font-bold">¡Red Completa!</h3>
