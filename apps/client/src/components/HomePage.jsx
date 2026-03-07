@@ -191,7 +191,6 @@ useEffect(() => {
 
                   {/* Lado Derecho: Contenedor para QR y Puntos alineados */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <QRAsistencia userId={session.id} />
                     <PointsDisplay />
                   </div>
                 </div>

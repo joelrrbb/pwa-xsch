@@ -199,11 +199,11 @@ const SocializadorPage = () => {
         });
 
         setShowModal(false);
-
-        const mensaje =
-          `¡Hola! 👋 Únete a mi equipo de socializadores.\n` +
-          `Activa tu cuenta aquí: https://pwa-xsch-client.vercel.app/\n` +
-          `Tu código: *${accessCode}*`;
+  
+		const mensaje =
+          `¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
+          `https://pwa-xsch-client.vercel.app/\n\n` +
+          `Tu código es: *${accessCode}*`;
 
         window.location.assign(
           `https://wa.me/591${formData.phone}?text=${encodeURIComponent(mensaje)}`
