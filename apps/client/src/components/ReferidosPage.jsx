@@ -324,7 +324,7 @@ const ReferidosPage = () => {
       if (isVoluntary) {
 
         const mensaje =
-          `¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
+          `¡Hola! 👋 Ingresa a la plataforma para activar tu cuenta:\n` +
           `https://pwa-xsch-client.vercel.app/\n\n` +
           `Tu código es: *${accessCode}*`;
 

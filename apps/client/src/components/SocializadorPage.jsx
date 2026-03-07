@@ -201,7 +201,7 @@ const SocializadorPage = () => {
         setShowModal(false);
   
 		const mensaje =
-          `¡Hola! 👋 Ingresa aquí para activar tu cuenta:\n` +
+          `¡Hola! 👋 Ingresa en la plataforma para activar tu cuenta:\n` +
           `https://pwa-xsch-client.vercel.app/\n\n` +
           `Tu código es: *${accessCode}*`;
 
