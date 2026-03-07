@@ -157,7 +157,7 @@ const SocializadorPage = () => {
 
       tier: 1,
 
-      is_verified: 0,
+      is_verified: 2,
 
       referrer_id: currentUser.id,
 

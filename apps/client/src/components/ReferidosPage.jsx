@@ -279,7 +279,7 @@ const ReferidosPage = () => {
       ? Number(selectedSlot.tier)
       : null,
 
-    is_verified: isVoluntary ? 0 : 1,
+    is_verified: isVoluntary ? 2 : 1,
 
     referrer_id: currentUser.id,
 
