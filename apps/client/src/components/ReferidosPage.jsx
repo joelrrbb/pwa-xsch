@@ -509,7 +509,7 @@ const ReferidosPage = () => {
       })}
     </IonRow>
   </IonGrid>
-  <div style={{ height: '10px' }}></div>
+  <div style={{ height: '20px' }}></div>
 </div>
 		
 		
