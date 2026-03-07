@@ -8,6 +8,9 @@ import {
 import MembersProgressBar from '../components/MembersProgressBar';
 import { checkmarkCircle, timeOutline, personAddOutline, closeCircleOutline } from 'ionicons/icons';
 
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const GET_USER_CONFIG = (user) => {
@@ -17,11 +20,11 @@ const GET_USER_CONFIG = (user) => {
   if (user.member_type === 1) {
 
     return [
+	  { id_slot: 4, member_type: 1, tier: (user.tier || 1) + 1 },
+      { id_slot: 5, member_type: 1, tier: (user.tier || 1) + 1 },
       { id_slot: 1, member_type: 0, tier: null },
       { id_slot: 2, member_type: 0, tier: null },
-      { id_slot: 3, member_type: 0, tier: null },
-      { id_slot: 4, member_type: 1, tier: (user.tier || 1) + 1 },
-      { id_slot: 5, member_type: 1, tier: (user.tier || 1) + 1 }
+      { id_slot: 3, member_type: 0, tier: null }
     ];
 
   }
@@ -132,7 +135,7 @@ const ReferidosPage = () => {
     return () => controller.abort();
 
   }, [currentUser.id]);
-
+  
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -359,6 +362,41 @@ const ReferidosPage = () => {
 
 }, [formData, selectedSlot, currentUser]);
 
+const startTutorial = useCallback(() => {
+    // Buscamos los slots vacíos que son de tipo voluntario
+    const emptyVoluntarySlots = document.querySelectorAll('.slot-vacio-voluntario');
+    
+    if (emptyVoluntarySlots.length === 0) return;
+
+    const driverObj = driver({
+      showProgress: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Atrás',
+      doneBtnText: 'Entendido',
+      steps: [
+        {
+          element: emptyVoluntarySlots[0],
+          popover: {
+            title: '¡Invita a tus amigos!',
+            description: 'Aquí puedes añadir a tus primeros amigos para completar tu equipo.',
+            side: "bottom",
+            align: 'start'
+          }
+        }
+      ]
+    });
+
+    driverObj.drive();
+  }, []);
+
+  // Puedes disparar esto en un useEffect después de cargar los datos
+  useEffect(() => {
+    if (!fetching && referidosDB.length < 2) {
+      // Pequeño timeout para asegurar que el DOM esté listo
+      setTimeout(startTutorial, 1000);
+    }
+  }, [fetching, referidosDB, startTutorial]);
+
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
@@ -474,8 +512,8 @@ const ReferidosPage = () => {
           icon = timeOutline;
           badgeColor = "bg-amber-500";
         } else if (isVoluntario) {
-          cardStyle = "bg-orange-50 border-orange-200 border-dashed text-orange-400";
-          badgeColor = "bg-orange-500";
+          cardStyle = "bg-violet-50 border-violet-300 border-dashed text-violet-500";
+		  badgeColor = "bg-violet-500";
         }
 
         return (
