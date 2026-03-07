@@ -243,7 +243,7 @@ useEffect(() => {
     style={{ flex: 1 }}
   >
     <img
-      src="https://res.cloudinary.com/dljymqntm/image/upload/v1772902276/equipo_xnv2c3.webp"
+      src="https://res.cloudinary.com/dljymqntm/image/upload/v1772902872/equipo_braiml.webp"
       alt="Support"
       style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '18px', display: 'block' }}
     />
