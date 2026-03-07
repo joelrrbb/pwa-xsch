@@ -416,14 +416,14 @@ const amigosLlenos = useMemo(() => {
         style={{ background: 'linear-gradient(90deg, #6366f1 0%, #7c3aed 100%)', minHeight: '60px' }}
       >
         <div className="pl-5 flex flex-col justify-center">
-          <span className="text-white text-[10px] uppercase font-black tracking-[0.15em] opacity-80">
-            Equipo completo
-          </span>
-          <span className="text-white text-base leading-tight font-semibold">
-            Relájate 😌 puedes agregar personas de confianza
-            hasta el día de la votación
-          </span>
-        </div>
+  <span className="text-white text-[10px] uppercase font-black tracking-[0.15em] opacity-80">
+    ¡Buen trabajo!
+  </span>
+  <span className="text-white text-base leading-tight">
+    Tus amigos ya están dentro 🙌 <br/>
+    Puedes añadir <b>3 personas de confianza</b> hasta el día de la votación
+  </span>
+</div>
 
         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
       </div>
