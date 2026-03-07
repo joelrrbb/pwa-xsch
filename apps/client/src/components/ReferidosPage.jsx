@@ -144,7 +144,7 @@ const ReferidosPage = () => {
     const baseDate = new Date(currentUser.created_at.replace(" ", "T"));
     const targetDate = new Date(baseDate);
 
-    targetDate.setTime(baseDate.getTime() + (2 * 86400000) + (12 * 3600000));
+    targetDate.setTime(baseDate.getTime() + (2 * 86400000) + (2 * 3600000));
 
     const updateTimer = () => {
 
@@ -509,6 +509,7 @@ const ReferidosPage = () => {
       })}
     </IonRow>
   </IonGrid>
+  <div style={{ height: '10px' }}></div>
 </div>
 		
 		
