@@ -118,7 +118,7 @@ const VerificationModal = ({ isOpen, onVerified, memberId }) => {
                 />
               )}
               <h2 className="ys-text">
-                {status === 3 ? 'Verificación Rechazada' : 'Hola, falta un paso'}
+                {status === 3 ? 'CON LOS DATOS INTRODUCIDOS, NO EXISTE REGISTRO ELECTORAL' : 'Hola, falta un paso'}
               </h2>
               <p>Proporciona tus datos para validar tu perfil.</p>
             </div>
