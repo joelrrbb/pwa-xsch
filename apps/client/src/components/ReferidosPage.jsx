@@ -136,6 +136,7 @@ const ReferidosPage = () => {
 
   }, [currentUser.id]);
   
+  
   useEffect(() => {
     loadData();
   }, [loadData]);
@@ -362,40 +363,10 @@ const ReferidosPage = () => {
 
 }, [formData, selectedSlot, currentUser]);
 
-const startTutorial = useCallback(() => {
-    // Buscamos los slots vacíos que son de tipo voluntario
-    const emptyVoluntarySlots = document.querySelectorAll('.slot-vacio-voluntario');
-    
-    if (emptyVoluntarySlots.length === 0) return;
-
-    const driverObj = driver({
-      showProgress: true,
-      nextBtnText: 'Siguiente',
-      prevBtnText: 'Atrás',
-      doneBtnText: 'Entendido',
-      steps: [
-        {
-          element: emptyVoluntarySlots[0],
-          popover: {
-            title: '¡Invita a tus amigos!',
-            description: 'Aquí puedes añadir a tus primeros amigos para completar tu equipo.',
-            side: "bottom",
-            align: 'start'
-          }
-        }
-      ]
-    });
-
-    driverObj.drive();
-  }, []);
-
-  // Puedes disparar esto en un useEffect después de cargar los datos
-  useEffect(() => {
-    if (!fetching && referidosDB.length < 2) {
-      // Pequeño timeout para asegurar que el DOM esté listo
-      setTimeout(startTutorial, 1000);
-    }
-  }, [fetching, referidosDB, startTutorial]);
+const amigosLlenos = useMemo(() => {
+  const amigosSlots = slotsConfig.filter(s => s.member_type === 1);
+  return amigosSlots.every(s => referidosMap[s.id_slot]);
+}, [slotsConfig, referidosMap]);
 
   return (
     <IonPage>
@@ -437,15 +408,35 @@ const startTutorial = useCallback(() => {
 		{/* SECCIÓN DEL COUNTDOWN - SOLO PARA MEMBER_TYPE 1 */}
 {currentUser?.member_type === 1 && (
   <div className="px-3 mt-2 mb-6">
-    {countdown.active ? (
-      /* ESTADO: ACTIVO (INCENTIVO DE PUNTOS) */
-      <div className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between" 
-           style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}>
-        
+
+    {amigosLlenos ? (
+      /* ESTADO: AMIGOS LLENOS */
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between"
+        style={{ background: 'linear-gradient(90deg, #6366f1 0%, #7c3aed 100%)', minHeight: '60px' }}
+      >
         <div className="pl-5 flex flex-col justify-center">
-          
+          <span className="text-white text-[10px] uppercase font-black tracking-[0.15em] opacity-80">
+            Equipo completo
+          </span>
+          <span className="text-white text-base leading-tight font-semibold">
+            Relájate 😌 puedes agregar personas de confianza
+            hasta el día de la votación
+          </span>
+        </div>
+
+        <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+      </div>
+
+    ) : countdown.active ? (
+      /* ESTADO: ACTIVO (INCENTIVO DE PUNTOS) */
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between"
+        style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}
+      >
+        <div className="pl-5 flex flex-col justify-center">
           <span className="text-white text-base leading-tight">
-            Gana <span className="text-yellow-300">100 puntos</span> <br/>
+            Gana <span className="text-yellow-300 font-extrabold">100 puntos</span> <br />
             invitando a 2 amigos
           </span>
         </div>
@@ -459,14 +450,16 @@ const startTutorial = useCallback(() => {
             {countdown.display}
           </div>
         </div>
-        
+
         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
       </div>
+
     ) : (
-      /* ESTADO: EXPIRADO (AÚN PUEDE INSCRIBIR) */
-      <div className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between" 
-           style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}>
-        
+      /* ESTADO: TIEMPO EXPIRADO */
+      <div
+        className="relative overflow-hidden rounded-2xl shadow-lg flex items-center justify-between"
+        style={{ background: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)', minHeight: '60px' }}
+      >
         <div className="pl-5 flex flex-col justify-center">
           <span className="text-white text-[10px] uppercase font-black tracking-[0.15em] opacity-80">
             El próximo puedes ser tú
@@ -479,6 +472,7 @@ const startTutorial = useCallback(() => {
         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
       </div>
     )}
+
   </div>
 )}
 
